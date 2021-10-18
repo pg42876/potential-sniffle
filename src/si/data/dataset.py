@@ -7,7 +7,9 @@ class Dataset:
     def __init__(self, X = None, Y = None,
                  xnames: list = None,
                  yname: str = None):
+
         """ Tabular Dataset"""
+        
         if X is None:
             raise Exception("Trying to instanciate a DataSet without any data")
         self.X = X #Linhas
@@ -17,6 +19,7 @@ class Dataset:
 
     @classmethod
     def from_data(cls, filename, sep = ",", labeled = True):
+
         """Creates a DataSet from a data file.
 
         :param filename: The filename
@@ -26,6 +29,7 @@ class Dataset:
         :return: A DataSet object
         :rtype: DataSet
         """
+
         data = np.genfromtxt(filename, delimiter = sep)
         if labeled:
             X = data[:, 0 : -1]
@@ -37,6 +41,7 @@ class Dataset:
 
     @classmethod
     def from_dataframe(cls, df, ylabel = None):
+
         """Creates a DataSet from a pandas dataframe.
 
         :param df: [description]
@@ -46,6 +51,7 @@ class Dataset:
         :return: [description]
         :rtype: [type]
         """
+
         if ylabel is not None and ylabel in df.columns:
             X = df.loc[:, df.columns != ylabel]
             Y = df.loc[:, ylabel].to_numpy()
@@ -59,22 +65,31 @@ class Dataset:
         return cls(X, Y, xnames, yname)
 
     def __len__(self):
+
         """ Returns the number of data points. """
+
         return self.X.shape[0]
 
     def hasLabel(self):
+
         """ Returns True if the dataset constains labels (a dependent variable) """
+
         return self.Y 
 
     def getNumFeatures(self):
+
         """ Returns the number of features """
+
         self.X.shape[1]
 
     def getNumClasses(self):
+
         """ Returns the number of label classes or 0 if the dataset has no dependent variable. """
+
         return len(np.unique(self.Y)) if self.hasLabel() else 0
 
     def writeDataset(self, filename, sep = ","):
+
         """ Saves the dataset to a file
 
         :param filename: The output file path
@@ -87,7 +102,9 @@ class Dataset:
         np.savetxt(filename, fullds, delimiter = sep)
 
     def toDataframe(self):
+
         """ Converts the dataset into a pandas DataFrame """
+        
         pass
 
     def getXy(self):

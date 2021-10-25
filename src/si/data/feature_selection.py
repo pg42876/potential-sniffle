@@ -6,6 +6,7 @@ import warnings
 class VarianceThreshold:
 
     def __init__ (self, threshold = 0):
+        
         """  
         The variance threshold is a simple baseline approach to (...)
         It removes all features which variance doesn't meet some (...)

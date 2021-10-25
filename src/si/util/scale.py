@@ -20,6 +20,7 @@ class StandardScaler:
     """
 
     def fit(self, dataset):
+
         """
         Calculate and store the mean and variance of each feature in the
         training set.
@@ -27,10 +28,12 @@ class StandardScaler:
         ----------
         dataset : A Dataset object to be standardized
         """
+        
         self.mean = np.mean(dataset.X, axis = 0)
         self.var = np.var(dataset.X, axis = 0)
 
     def transform(self, dataset, inline = False):
+
         """
         Standardize data by subtracting out the mean and dividing by
         standard deviation calculated during fitting.
@@ -41,6 +44,7 @@ class StandardScaler:
         -------
         A Dataset object with standardized data.
         """
+
         Z = (dataset.X - self.mean) / np.sqrt(self.var)
         if inline: #Inline: se for True -> acrescenta a coluna da standardização ao dataset; se for False -> cria uma nova coluna (Z) e copia as outras
             dataset.X = Z
@@ -49,6 +53,7 @@ class StandardScaler:
             return Dataset(Z, copy(dataset.Y), copy(dataset.xnames), copy(dataset.yname))
 
     def fit_transform(self, dataset, inline = False):
+
         """
         Calculate and store the mean and variance of each feature and
         standardize the data.
@@ -59,10 +64,12 @@ class StandardScaler:
         -------
         A Dataset object to with standardized data.
         """
+
         self.fit(dataset)
         return self.transform(dataset, inline = inline)
 
     def inverse_transform(self, dataset, inline = False):
+
         """
         Transform data back into orginal state by multiplying by standard
         deviation and adding the mean back in.
@@ -76,4 +83,5 @@ class StandardScaler:
         -------
         Dataset object
         """
+
         pass

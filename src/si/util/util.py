@@ -5,7 +5,6 @@ ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
 
 __all__ = ['label_gen', 'summary']
 
-
 def label_gen(n):
     """ Generates a list of n distinct labels similar to Excel"""
     def _iter_all_strings():
@@ -24,7 +23,8 @@ def label_gen(n):
     return [gen() for _ in range(n)]
 
 
-def summary(dataset, format='df'):
+def summary(dataset, format = 'df'):
+
     """ Returns the statistics of a dataset(mean, std, max, min)
 
     :param dataset: A Dataset object
@@ -32,4 +32,14 @@ def summary(dataset, format='df'):
     :param format: Output format ('df':DataFrame, 'dict':dictionary ), defaults to 'df'
     :type format: str, optional
     """
+
     pass
+
+def l1_distance (x, y):
+    import numpy as np
+    dist = (np.absolute(x - y)).sum(axis = 1)
+    return dist
+
+def l2_distance  (x, y):
+    dist = ((x - y) ** 2).sum(axix = 1)
+    return dist

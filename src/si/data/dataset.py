@@ -91,7 +91,6 @@ class Dataset:
     def writeDataset(self, filename, sep = ","):
 
         """ Saves the dataset to a file
-
         :param filename: The output file path
         :type filename: str
         :param sep: The fields separator, defaults to ","

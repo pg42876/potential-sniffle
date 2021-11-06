@@ -2,11 +2,13 @@ import numpy as np
 from scipy import stats
 from copy import copy
 import warnings
-from si.util.util import euclidean, l2_distance, manhattan
+from si.util.util import euclidean, manhattan
+from si.util.scale import StandardScaler
 
 class PCA:
-    def __init__(self):
-        pass
+    def __init__(self, components = 2, using = 'svd'):
+        self.components = components
+        self.using = using
 
     def fit(self, dataset):
         pass

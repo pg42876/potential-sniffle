@@ -3,6 +3,7 @@ from copy import copy
 from ..data import Dataset
 
 class StandardScaler:
+    
     """
     Standardize features by centering the mean to 0 and unit variance.
     The standard score of an instance is calculated by:

@@ -1,5 +1,6 @@
 import itertools
 import numpy as np
+import pandas as pd
 
 # Y is reserved to idenfify dependent variables
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
@@ -35,7 +36,31 @@ def summary(dataset, format = 'df'):
     """
 
     if  dataset.hasLabel():
-        data = np.hstack((dataset.X, dataset.Y.reshape()))
+        data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1)))
+        names = []
+        for d in dataset._xnames:
+            names.append(d)
+        names.append(dataset._xnames)
+    else:
+        data = dataset.X.copy()
+        names = [dataset._xnames]
+    mean = np.mean(data, axis = 0)
+    var = np.var(data, axis = 0)
+    maximo = np.max(data, axis = 0)
+    minimo = np.min(data, axis = 0)
+    stats = {}
+    for i in range(data.shape[1]): #Guarda tudo num dicionário
+        statistic = {'mean': mean[i], #Média da coluna
+                    'var': var[i], #Variância da coluna
+                    'max': maximo[i], #Máximo da coluna
+                    'min': minimo[i] #Mínimo da coluna
+                    }
+        stats[names[i]] = statistic
+    if format == 'df': #Transforma num dataframe
+        df = pd.DataFrame(stats)
+        return df
+    else:
+        return stats
 
 def euclidean(x, y):
     import numpy as np

@@ -1,4 +1,5 @@
 import itertools
+import numpy as np
 
 # Y is reserved to idenfify dependent variables
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
@@ -36,11 +37,11 @@ def summary(dataset, format = 'df'):
     if  dataset.hasLabel():
         data = np.hstack((dataset.X, dataset.Y.reshape()))
 
-def l1_distance (x, y):
+def euclidean(x, y):
     import numpy as np
     dist = (np.absolute(x - y)).sum(axis = 1)
     return dist
 
-def l2_distance  (x, y):
+def manhattan(x, y):
     dist = ((x - y) ** 2).sum(axix = 1)
     return dist

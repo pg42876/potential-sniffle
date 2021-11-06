@@ -54,6 +54,7 @@ class VarianceThreshold:
         correlation_coefficient = np.array()
 
 class SelectKBest:
-    
+
     def __init__(self, k, score_fun = 'f_regression'):
          if score_fun == 'f_regression':
+             pass

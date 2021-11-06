@@ -33,7 +33,8 @@ def summary(dataset, format = 'df'):
     :type format: str, optional
     """
 
-    pass
+    if  dataset.hasLabel():
+        data = np.hstack((dataset.X, dataset.Y.reshape()))
 
 def l1_distance (x, y):
     import numpy as np

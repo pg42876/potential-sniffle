@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from si.util.util import label_gen
 
 __all__ = ['Dataset']
@@ -74,7 +75,7 @@ class Dataset:
 
         """ Returns True if the dataset constains labels (a dependent variable) """
 
-        return self.Y 
+        return self.Y is not None #Número de labels 
 
     def getNumFeatures(self):
 
@@ -97,14 +98,20 @@ class Dataset:
         :type sep: str, optional
         """
 
-        fullds = np.hstack((self.X, self.Y.reshape(len(self.Y), 1)))
+        fullds = np.hstack((self.X, self.Y.reshape(len(self.Y), 1))) #Número de linhas igua
         np.savetxt(filename, fullds, delimiter = sep)
 
     def toDataframe(self):
 
         """ Converts the dataset into a pandas DataFrame """
         
-        pass
+        if self.Y in None: #Se não existir variável independente
+            dataset = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
+        else:
+            dataset = pd. DataFrame()
 
-    def getXy(self):
+    def getXy(self): 
+
+        """ Vai buscar os valores """
+
         return self.X, self.Y

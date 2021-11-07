@@ -3,7 +3,7 @@ from copy import copy
 from ..data import Dataset
 
 class StandardScaler:
-    
+
     """
     Standardize features by centering the mean to 0 and unit variance.
     The standard score of an instance is calculated by:
@@ -87,4 +87,9 @@ class StandardScaler:
 
         self.fit_transform(dataset)
         inv = dataset.X * np.sqrt(self.var) + self.mean
+        if inline:
+            dataset.X = inv
+            return inv
+        else:
+            return Dataset(inv, copy(dataset.Y), copy(dataset.xnames), copy(dataset.yname))
 

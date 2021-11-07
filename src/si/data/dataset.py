@@ -106,9 +106,10 @@ class Dataset:
         """ Converts the dataset into a pandas DataFrame """
         
         if self.Y in None: #Se não existir variável independente
-            dataset = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
+            df = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
         else:
-            dataset = pd. DataFrame()
+            df = pd.DataFrame(np.hstack((self.X, self.Y.reshape(len(self.Y), 1))), columns = np.hstack((self._xnames, self._yname)))
+        return df
 
     def getXy(self): 
 

@@ -2,26 +2,56 @@ import numpy as np
 from scipy import stats
 from copy import copy
 import warnings
-from si.util.util import euclidean, manhattan
+from si import data
+from src.si.data import Dataset
+from si.util.util import euclidean, manhattan, summary
 from si.util.scale import StandardScaler
 
 class PCA:
-    def __init__(self, components = 2, using = 'svd'):
+    def __init__(self, components = 2, method = 'svd'):
         self.components = components
-        self.using = using
+        available_methods = ['svd', 'evd']
+        if method not in available_methods:
+            raise Exception(f"Method not available. Please choose between: {available_methods}.")
+        self.method = method
 
     def fit(self, dataset):
         pass
 
     def tranform(self, dataset):
-        pass
+        xscale = StandardScaler().fit_transform(dataset) #Normaliza os dados
+        f = xscale.X.T
+        if self.method == 'svd':
+            self.vectors, self.values, rv = np.linalg.svd(f)
+        else:
+            matriz = np.cov(f)
+            self.vectors, self.values, rv = np.linalg.svd(matriz)
+        self.idxs_sort = np.argsort(self.values) #Índices ordenados por importância dos componentes
+        self.values_sort = self.values[self.idxs_sort] #Ordena os valores pelo índice da coluna
+        self.vectors_sort = self.vectors[:, self.idxs_sort] #Ordena os vetores pelo índice da coluna
+        if self.components > 0:
+            if self.components > dataset.X.shape[1]:
+                warnings.warn('The number of components is larger than the number of features.')
+                self.components = dataset.X.shape[1]
+            self.vector_comp = self.vectors_sort[:, 0:self.components] #Vetores correspondentes ao número de componentes selecionados
+        else:
+            warnings.warn('The number of components is lower than 0.')
+            self.components = 1
+            self.vector_comp = self.vectors_sort[:, 0:self.components]
+        r = np.dot(self.vector_comp.transpose(), f).transpose()
+        return r
 
     def fit_transform(self, dataset):
-        pass
+        s = self.tranform(dataset)
+        summary_comp = self.variance_transform()
+        return s, summary_comp
 
     def variance_transform(self, dataset):
-        pass
-
+        summary_value = np.sum(self.values_sort)
+        evalues = []
+        for value in self.values_sort:
+            evalues.append(value / summary_value * 100)
+        return np.array(evalues)
 
 class Kmeans:
 

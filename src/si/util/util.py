@@ -12,16 +12,14 @@ def label_gen(n):
     def _iter_all_strings():
         size = 1
         while True:
-            for s in itertools.product(ALPHA, repeat=size):
+            for s in itertools.product(ALPHA, repeat = size):
                 yield "".join(s)
             size += 1
-
     generator = _iter_all_strings()
 
     def gen():
         for s in generator:
             return s
-
     return [gen() for _ in range(n)]
 
 
@@ -62,11 +60,10 @@ def summary(dataset, format = 'df'):
     else:
         return stats
 
-def euclidean(x, y):
-    import numpy as np
+def manhattan(x, y):
     dist = (np.absolute(x - y)).sum(axis = 1)
     return dist
 
-def manhattan(x, y):
-    dist = ((x - y) ** 2).sum(axix = 1)
+def eucledian(x, y):
+    dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))
     return dist

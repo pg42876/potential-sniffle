@@ -22,32 +22,40 @@ class VarianceThreshold:
         self.threshold = threshold
 
     def fit (self, dataset):
+
+        """
+        Vai buscar todas as variáveis não dependentes e calcular a sua variância
+        """
         X = dataset.X
-        self._var = np.var(X, axis = 0) #Calcula a variância dos valores dos datasets (variáveis não dependentes)
+        self._var = np.var(X, axis = 0) #Self.var -> guarda os resultados na memória do objeto
 
     def transform (self, dataset, inline = False):
         X = dataset.X
-        cond = self._var > self.threshold #Guarda todas as variâncias -> array de bolianos
+        cond = self._var > self.threshold #Guarda todas as variâncias -> array de bolianos (True ou False)
         idxs = []
         for a in range(len(cond)): #Seleção dos índices
-            if cond[a]:
-                idxs.append(a) #Se a variância for maior do que o threshold
+            if cond[a]: #is True:
+                idxs.append(a) #Faz o append do índice se a variância for maior do que o threshold
         X_trans = X[:, idxs] #Seleção das features que nos interessam
         xnames = []
         for b in idxs:
             xnames.append(dataset._xnames[b]) #Seleção do nome das features (colunas)
-        if inline: #Altera o dataset por completo. Se for True -> o dataset vai ser transformado com as novas condições
+        if inline: #is True: ; Altera o dataset por completo. Se for True -> o dataset vai ser transformado com as novas condições (guarda por cima do dataset existente)
             dataset.X = X_trans
             dataset._xnames = xnames
             return dataset
         else: #Se for False -> criação de um novo dataset, existindo na mesma o velho
-            return Dataset(X_trans, copy(dataset.Y), xnames, copy(dataset._yname))
+            return Dataset(X_trans, copy(dataset.Y), xnames, copy(dataset._yname)) #Faz-se o copy com y porque estamos a ver as variáveis independentes
 
     def fit_transform(self, dataset, inline = False):
-        self.fit(dataset)
+        self.fit(dataset) #Recebe um dataset e corre o fit (variâncias) com esse dataset
         return self.transform(dataset, inline = inline)
 
 class SelectKBest:
+
+    """
+    Semelhante à VarianceThreshold, mas em vez de trabalhar com variâncias trabalha com scores
+    """
 
     def __init__(self, k, score_fun = 'f_regression'):
         if score_fun == 'f_regression':
@@ -67,10 +75,10 @@ class SelectKBest:
     def transform(self, dataset, inline = False):
         data = copy(dataset.X)
         name = copy(dataset._xnames)
-        if self.k > data.shape[1]:
+        if self.k > data.shape[1]: #self.k não pode ser maior que o número de colunas
             warnings.warn('K value greather than the number of features available.')
-            self.k = data.shape[1]
-        lista = np.argsort(self.Fscore)[-self.k:]
+            self.k = data.shape[1] #Tuplo com as dimensões do array
+        lista = np.argsort(self.Fscore)[-self.k:] #sort das colunas pelo Fscore e depois vai buscar os índices; como temos (-) vai buscar os últimos valores porque queremos os que têm maior score, dependendo do k
         datax = data[:, lista] #Dados das features selecionadas
         xnames = [name[ind] for ind in lista]
         if inline:
@@ -81,12 +89,16 @@ class SelectKBest:
             return Dataset(datax, copy(dataset.Y), xnames, copy(dataset._yname))
      
     def fit_transform(self, dataset, inline = False):
-        self.fit(dataset)
+        self.fit(dataset) #Recebe um dataset e corre o fit (scores) com esse dataset
         return self.transform(dataset, inline = inline)
 
 def f_classification (dataset): 
 
-    """ ANOVA: """
+    """
+    ANOVA: avalia afirmações através das médias das populações.
+    A análise permite verificar se exite ou não diferença significativa entre as
+    médias e se os fatores têm influência nas variáveis dependentes.
+    """
 
     X = dataset.X
     y = dataset.y
@@ -98,7 +110,13 @@ def f_classification (dataset):
 
 def f_regression (dataset):
 
-    """ REGRESSÃO DE PEARSON: """
+    """
+    REGRESSÃO DE PEARSON: mede o grau da correlação entre duas variáveis de uma escala métrica.
+    Varia entre -1 e 1:
+    - p = 1: correlação perfeita positiva entre as duas variáveis;
+    - p = -1: correlação perfeita negativa entre as duas variáveis, isto é, quando uma aumenta, a outra diminui;
+    - p = 0: significa que as duas variáveis não dependem linearmente uma da outra.
+    """
 
     X = dataset.X
     y = dataset.Y

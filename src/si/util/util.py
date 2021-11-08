@@ -8,7 +8,10 @@ ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
 __all__ = ['label_gen', 'summary']
 
 def label_gen(n):
+
     """ Generates a list of n distinct labels similar to Excel"""
+    #Dá o nome às colunas
+
     def _iter_all_strings():
         size = 1
         while True:
@@ -34,13 +37,13 @@ def summary(dataset, format = 'df'):
     """
 
     if dataset.hasLabel():
-        data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1)))
+        data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1))) #reshape -> serve para transformar em array; esta linha dá uma nova forma ao array (vai ter as linhas dataset.Y e uma coluna)
         names = []
         for d in dataset._xnames:
             names.append(d)
-        names.append(dataset._yname)
+        names.append(dataset._yname) #Abre-se a lista names e juntam-se os nomes de xnames e de yname
     else:
-        data = dataset.X.copy()
+        data = dataset.X.copy() #Para salvaguardar o dataset
         names = [dataset._xnames]
     mean = np.mean(data, axis = 0)
     var = np.var(data, axis = 0)
@@ -65,5 +68,10 @@ def manhattan(x, y):
     return dist
 
 def euclidean(x, y):
+
+    """
+    Distância entre dois pontos
+    """
+
     dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))
     return dist

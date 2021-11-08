@@ -8,15 +8,17 @@ from si.util.util import euclidean, manhattan, summary
 from si.util.scale import StandardScaler
 
 class PCA:
+
+    """
+
+    """
+
     def __init__(self, components = 2, method = 'svd'):
         self.components = components
         available_methods = ['svd', 'evd']
         if method not in available_methods:
             raise Exception(f"Method not available. Please choose between: {available_methods}.")
         self.method = method
-
-    def fit(self, dataset):
-        pass
 
     def tranform(self, dataset):
         xscale = StandardScaler().fit_transform(dataset) #Normaliza os dados
@@ -55,9 +57,14 @@ class PCA:
 
 class Kmeans:
 
+    """
+    Agrupa os dados tentando dividir as amostras por k grupos
+    minimizando as distâncias entre pontos e centróides dos clusters.
+    """
+
     def __init__ (self, K: int, max_interactions = 100, distance = 'euclidean'):
         self.k = K #Número inteiro
-        self.max_interactions = max_interactions
+        self.max_interactions = max_interactions #Número máximo de interações
         self.centroids = None
         if distance == 'euclidean':
             self.distance = euclidean
@@ -68,16 +75,16 @@ class Kmeans:
 
     def fit (self, dataset):
         x = dataset.X
-        self._min = np.min(x, axis = 0)
-        self._max = np.max(x, axis = 0)
+        self._min = np.min(x, axis = 0) #Mínimo
+        self._max = np.max(x, axis = 0) #Máximo
         #Não tem return porque estamos a guardar o resultado no objeto
 
     def init_centroids (self, dataset):
         x = dataset.X
         centroids = []
         for c in range(x.shape[1]):
-            centroids.append(np.random.uniform(low = self._min[c], high = self._max[c], size = (self.k))) #Vai correr as colunas, self.k -> 
-        self.centroids = np.array(centroids).T
+            centroids.append(np.random.uniform(low = self._min[c], high = self._max[c], size = (self.k))) #Vai correr as colunas e avaliar todos os pontos (descobre os centróides)
+        self.centroids = np.array(centroids).T #Transforma em array e faz a transposta
 
     def get_closest_centroid (self, x):
         dist = self.distance(x, self.centroids)

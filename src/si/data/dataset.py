@@ -13,8 +13,8 @@ class Dataset:
         
         if X is None:
             raise Exception("Trying to instanciate a DataSet without any data")
-        self.X = X #Linhas
-        self.Y = Y
+        self.X = X #Linhas (dados independentes)
+        self.Y = Y #Última linha do dataset de dados dependentes dos outros dados
         self._xnames = xnames if xnames else label_gen(X.shape[1])
         self._yname = yname if yname else 'Y'
 
@@ -30,15 +30,16 @@ class Dataset:
         :return: A DataSet object
         :rtype: DataSet
         """
+        #Através de um ficheiro txt cria um dataset
 
         data = np.genfromtxt(filename, delimiter = sep)
-        if labeled:
+        if labeled: #Se a variável for igual a True; labeled -> para ver se tem a última coluna
             X = data[:, 0 : -1]
             Y = data[:, -1]
         else:
             X = data
             Y = None
-        return cls(X, Y)
+        return cls(X, Y) #Vai transformar o (x, y) numa class dataset
 
     @classmethod
     def from_dataframe(cls, df, ylabel = None):
@@ -53,13 +54,13 @@ class Dataset:
         :rtype: [type]
         """
 
-        if ylabel is not None and ylabel in df.columns:
-            X = df.loc[:, df.columns != ylabel]
-            Y = df.loc[:, ylabel].to_numpy()
-            xnames = df.columns.tolist().remove(ylabel)
+        if ylabel is not None and ylabel in df.columns: #Verifica se existe variável dependente -> labeled = ylabel
+            X = df.loc[:, df.columns != ylabel] #df.loc[:,] -> acessa às linhas e colunas pelo nome das colunas (df.columns != ylabel - menos a ylabel)
+            Y = df.loc[:, ylabel].to_numpy() #Transforma para numpy array
+            xnames = df.columns.tolist().remove(ylabel) #Remove o ylabel
             yname = ylabel
-        else:
-            X = df.to_numpy()
+        else: #Se o ylabel não existir
+            X = df.to_numpy() #Transforma em numpy array
             Y = None
             xnames = df.columns.tolist()
             yname = None
@@ -68,24 +69,26 @@ class Dataset:
     def __len__(self):
 
         """ Returns the number of data points. """
+        #Criar um função len para que sempre que chamarmos o len retornar o número de linhas para ele saber o que é suposto contar
 
-        return self.X.shape[0]
+        return self.X.shape[0] #Devolve as linhas
 
     def hasLabel(self):
 
         """ Returns True if the dataset constains labels (a dependent variable) """
 
-        return self.Y is not None #Número de labels 
+        return self.Y is not None #Número de labels; devolve True ou False (caso exista ou não variável dependente)
 
     def getNumFeatures(self):
 
         """ Returns the number of features """
 
-        self.X.shape[1]
+        self.X.shape[1] #Retorna o número de colunas das variáveis independentes (1 representa as colunas)
 
     def getNumClasses(self):
 
         """ Returns the number of label classes or 0 if the dataset has no dependent variable. """
+        #Vai buscar os valores únicos das variáveis dependentes
 
         return len(np.unique(self.Y)) if self.hasLabel() else 0
 
@@ -98,16 +101,17 @@ class Dataset:
         :type sep: str, optional
         """
 
-        fullds = np.hstack((self.X, self.Y.reshape(len(self.Y), 1))) #Número de linhas igua
+        fullds = np.hstack((self.X, self.Y.reshape(len(self.Y), 1))) #Junta x e y
+        #RESHAPE -> y: lista com valores dependentes, mas vai tornar-se numa coluna com um elemento em cada linha
         np.savetxt(filename, fullds, delimiter = sep)
 
     def toDataframe(self):
 
         """ Converts the dataset into a pandas DataFrame """
         
-        if self.Y is None: #Se não existir variável independente
+        if self.Y is None: #Se não existir variável dependente (y)
             dataset = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
-        else:
+        else: #Se existir variável dependente
             dataset = pd.DataFrame(np.hstack((self.X, self.Y.reshape(len(self.Y), 1))), columns = np.hstack((self._xnames, self._yname)))
         return dataset
 

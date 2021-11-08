@@ -78,7 +78,7 @@ class SelectKBest:
             dataset.xnames = xnames
             return dataset 
         else:
-            return Dataset(datax, copy(dataset.Y), xnames, copy(dataset.yname))
+            return Dataset(datax, copy(dataset.Y), xnames, copy(dataset._yname))
      
     def fit_transform(self, dataset, inline = False):
         self.fit(dataset)
@@ -101,7 +101,7 @@ def f_regression (dataset):
     """ REGRESSÃO DE PEARSON: """
 
     X = dataset.X
-    y = dataset.y
+    y = dataset.Y
     cor_coef = np.array([stats.pearsonr(X[:, i], y)[0] for i in range(X.shape[1])])
     dof = y.size - 2  #Graus de liberdade
     cor_coef_sqrd = cor_coef ** 2

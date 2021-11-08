@@ -33,12 +33,12 @@ def summary(dataset, format = 'df'):
     :type format: str, optional
     """
 
-    if  dataset.hasLabel():
+    if dataset.hasLabel():
         data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1)))
         names = []
         for d in dataset._xnames:
             names.append(d)
-        names.append(dataset._xnames)
+        names.append(dataset._yname)
     else:
         data = dataset.X.copy()
         names = [dataset._xnames]
@@ -64,6 +64,6 @@ def manhattan(x, y):
     dist = (np.absolute(x - y)).sum(axis = 1)
     return dist
 
-def eucledian(x, y):
+def euclidean(x, y):
     dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))
     return dist

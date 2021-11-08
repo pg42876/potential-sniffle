@@ -14,9 +14,9 @@ class Dataset:
         if X is None:
             raise Exception("Trying to instanciate a DataSet without any data")
         self.X = X #Linhas
-        self.Y = Y #Colunas
-        self.xnames = xnames if xnames else label_gen(X.shape[1])
-        self.yname = yname if yname else 'Y'
+        self.Y = Y
+        self._xnames = xnames if xnames else label_gen(X.shape[1])
+        self._yname = yname if yname else 'Y'
 
     @classmethod
     def from_data(cls, filename, sep = ",", labeled = True):
@@ -56,7 +56,7 @@ class Dataset:
         if ylabel is not None and ylabel in df.columns:
             X = df.loc[:, df.columns != ylabel]
             Y = df.loc[:, ylabel].to_numpy()
-            xnames = df.columns.tolist().remove()
+            xnames = df.columns.tolist().remove(ylabel)
             yname = ylabel
         else:
             X = df.to_numpy()
@@ -105,11 +105,11 @@ class Dataset:
 
         """ Converts the dataset into a pandas DataFrame """
         
-        if self.Y in None: #Se não existir variável independente
-            df = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
+        if self.Y is None: #Se não existir variável independente
+            dataset = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
         else:
-            df = pd.DataFrame(np.hstack((self.X, self.Y.reshape(len(self.Y), 1))), columns = np.hstack((self._xnames, self._yname)))
-        return df
+            dataset = pd.DataFrame(np.hstack((self.X, self.Y.reshape(len(self.Y), 1))), columns = np.hstack((self._xnames, self._yname)))
+        return dataset
 
     def getXy(self): 
 

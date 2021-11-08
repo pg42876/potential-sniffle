@@ -46,7 +46,7 @@ class PCA:
         summary_comp = self.variance_transform()
         return s, summary_comp
 
-    def variance_transform(self, dataset):
+    def variance_transform(self):
         summary_value = np.sum(self.values_sort)
         evalues = []
         for value in self.values_sort:
@@ -60,11 +60,11 @@ class Kmeans:
         self.max_interactions = max_interactions
         self.centroids = None
         if distance == 'euclidean':
-            self.dist = euclidean
+            self.distance = euclidean
         elif distance == 'manhattan':
             self.distance = manhattan
         else:
-            pass
+            raise Exception('Distance metric not available \n Score functions: euclidean, manhattan')
 
     def fit (self, dataset):
         x = dataset.X
@@ -86,18 +86,17 @@ class Kmeans:
 
     def transform (self, dataset):
         self.init_centroids(dataset)
-        print(self.centroids)
         X = dataset.X
-        change = False
+        changed = False
         count = 0
         old_idxs = np.zeros(X.shape[0]) #Array de zeros
-        while not change or count < self.max_interactions:
-            idxs = np.array_along_axis(self.get_closest_centroid, axis = 0, arr = X.T)
+        while not changed or count < self.max_interactions:
+            idxs = np.apply_along_axis(self.get_closest_centroid, axis = 0, arr = X.T)
             centroids = []
             for i in range(self.k):
                 centroids.append(np.mean(X[idxs == i], axis = 0)) #Cálculo dos centróides com base na média
             self.centroids = np.array(centroids) 
-            change = np.all(old_idxs == idxs) #O all vai testar se todos os valores
+            changed = np.all(old_idxs == idxs) #O all vai testar se todos os valores
             old_idxs = idxs
             count += 1 
             return self.centroids, old_idxs

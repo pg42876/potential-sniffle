@@ -1,6 +1,7 @@
 import itertools
 import numpy as np
 import pandas as pd
+from si.data import Dataset
 
 # Y is reserved to idenfify dependent variables
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
@@ -63,11 +64,16 @@ def summary(dataset, format = 'df'):
     else:
         return stats
 
-def manhattan(x, y):
+def manhattan(x, y): #L1
+
+    """
+
+    """
+
     dist = (np.absolute(x - y)).sum(axis = 1)
     return dist
 
-def euclidean(x, y):
+def euclidean(x, y): #L2
 
     """
     Distância entre dois pontos
@@ -75,3 +81,27 @@ def euclidean(x, y):
 
     dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))
     return dist
+
+def accuracy_score(y_true, y_pred):
+    """
+    Verifica quais são as previsões que são iguais a valores reais
+    """
+    correct = 0
+    for true, pred in zip(y_true, y_pred):
+        if true == pred:
+            correct += 1
+    accuracy = correct / len(y_true)
+    return accuracy
+
+def train_test_split(dataset, split = 0.8):
+    n = dataset.X.shape[0]
+    m = int(split * n)
+    array = np.arange(n)
+    np.random.shuffle(array)
+    train = Dataset(dataset.X[array[:m]], dataset.Y[array[:m]], dataset._xnames, dataset._yname)
+    test = Dataset(dataset.X[array[m:]], dataset.Y[array[m:]], dataset._xnames, dataset._yname)
+    return train, test
+
+def sigmoide(x):
+    return 1 / (1 + np.exp(-x))
+

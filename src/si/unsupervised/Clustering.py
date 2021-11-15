@@ -10,7 +10,7 @@ from si.util.scale import StandardScaler
 class PCA:
 
     """
-
+    Reduz a dimensão do dataset, mas mantém compacta a informação do dataset de maior dimensão
     """
 
     def __init__(self, components = 2, method = 'svd'):

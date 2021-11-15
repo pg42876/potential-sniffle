@@ -53,7 +53,7 @@ class PCA:
         evalues = []
         for value in self.values_sort:
             evalues.append(value / summary_value * 100)
-        return np.array(evalues)
+        return np.array(evalues) #Retorna um array com as variâncias em percentagem
 
 class Kmeans:
 
@@ -101,11 +101,11 @@ class Kmeans:
             idxs = np.apply_along_axis(self.get_closest_centroid, axis = 0, arr = X.T)
             centroids = []
             for i in range(self.k):
-                centroids.append(np.mean(X[idxs == i], axis = 0)) #Cálculo dos centróides com base na média
+                centroids.append(np.mean(X[idxs == i], axis = 0)) #Cálculo dos centróides com base na média (passam a ser os novos pontos)
             self.centroids = np.array(centroids) 
-            changed = np.all(old_idxs == idxs) #O all vai testar se todos os valores
-            old_idxs = idxs
-            count += 1 
+            changed = np.all(old_idxs == idxs) #O all vai testar se todos os valores; testa se todos os idxs são os antigos
+            old_idxs = idxs #Os idxs antigos passam a ser os novos
+            count += 1 #Aumenta o número de iterações
             return self.centroids, old_idxs
 
     def fit_transform (self, dataset):

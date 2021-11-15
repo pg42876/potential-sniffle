@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 import pandas as pd
-from si.data import Dataset
+from si.data.dataset import Dataset
 
 # Y is reserved to idenfify dependent variables
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'

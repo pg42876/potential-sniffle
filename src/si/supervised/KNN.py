@@ -1,5 +1,4 @@
 from model import Model
-from si.supervised import model
 from si.util.util import manhattan, accuracy_score
 import numpy as np
 
@@ -14,11 +13,23 @@ class KNN(Model):
         self.is_fitted = True
 
     def get_neighboors(self, x):
+
+        """
+        Calcula as distâncias entre cada ponto de teste
+        em relação a todos os pontos do dataset de treino
+        """
+
         distance = manhattan(x, self.dataset.X)
-        idxs_sort = np.argsort(distance)
-        return idxs_sort[:self.number_neighboors]
+        idxs_sort = np.argsort(distance) #Dá sort aos idxs tendo em conta a distância
+        return idxs_sort[:self.number_neighboors] #Retorna os idxs dos melhores pontos
 
     def predcit(self, x):
+
+        """
+        :param x: array de teste
+        :return: predicted labels
+        """
+
         assert self.is_fitted, 'Model must be fot before prediction'
         viz = self.get_neighboors(x) #Pontos mais próximos de x
         values = self.dataset.Y[viz].tolist() #Transforma os valores em lista

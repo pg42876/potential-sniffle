@@ -11,11 +11,12 @@ class PCA:
 
     """
     Reduz a dimensão do dataset, mas mantém compacta a informação do dataset de maior dimensão
+    Só podem ser usados dados numéricos
     """
 
     def __init__(self, components = 2, method = 'svd'):
-        self.components = components
-        available_methods = ['svd', 'evd']
+        self.components = components #
+        available_methods = ['svd', 'evd'] 
         if method not in available_methods:
             raise Exception(f"Method not available. Please choose between: {available_methods}.")
         self.method = method
@@ -30,7 +31,7 @@ class PCA:
             self.vectors, self.values, rv = np.linalg.svd(matriz)
         self.idxs_sort = np.argsort(self.values) #Índices ordenados por importância dos componentes
         self.values_sort = self.values[self.idxs_sort] #Ordena os valores pelo índice da coluna
-        self.vectors_sort = self.vectors[:, self.idxs_sort] #Ordena os vetores pelo índice da coluna
+        self.vectors_sort = self.vectors[:, self.idxs_sort] #Ordena os vetores pelo índice da coluna (decrescente)
         if self.components > 0:
             if self.components > dataset.X.shape[1]:
                 warnings.warn('The number of components is larger than the number of features.')
@@ -42,11 +43,6 @@ class PCA:
             self.vector_comp = self.vectors_sort[:, 0:self.components]
         r = np.dot(self.vector_comp.transpose(), f).transpose()
         return r
-
-    def fit_transform(self, dataset):
-        s = self.tranform(dataset)
-        summary_comp = self.variance_transform()
-        return s, summary_comp
 
     def variance_transform(self):
         summary_value = np.sum(self.values_sort)
@@ -63,7 +59,7 @@ class Kmeans:
     """
 
     def __init__ (self, K: int, max_interactions = 100, distance = 'euclidean'):
-        self.k = K #Número inteiro
+        self.k = K #Número inteiro - número de clusters
         self.max_interactions = max_interactions #Número máximo de interações
         self.centroids = None
         if distance == 'euclidean':
@@ -74,12 +70,23 @@ class Kmeans:
             raise Exception('Distance metric not available \n Score functions: euclidean, manhattan')
 
     def fit (self, dataset):
+
+        """
+        Adiciona ao self o mínimo e o máximo de todas os pontos
+        """
+
         x = dataset.X
         self._min = np.min(x, axis = 0) #Mínimo
         self._max = np.max(x, axis = 0) #Máximo
         #Não tem return porque estamos a guardar o resultado no objeto
 
     def init_centroids (self, dataset):
+
+        """
+        PRIMEIRA ITERAÇÃO
+        Os primeiros centróides são encontrados de forma aleatória.
+        """
+        
         x = dataset.X
         centroids = []
         for c in range(x.shape[1]):
@@ -87,13 +94,18 @@ class Kmeans:
         self.centroids = np.array(centroids).T #Transforma em array e faz a transposta
 
     def get_closest_centroid (self, x):
+
+        """
+        Calcula as distâncias entre os centróides e escolhe as menores distâncias
+        """
+
         dist = self.distance(x, self.centroids)
         closest_centroid_index = np.argmin(dist, axis = 0)
         return closest_centroid_index
 
     def transform (self, dataset):
-        self.init_centroids(dataset)
-        X = dataset.X
+        self.init_centroids(dataset) #Primeiros centróides
+        X = dataset.X 
         changed = False
         count = 0
         old_idxs = np.zeros(X.shape[0]) #Array de zeros

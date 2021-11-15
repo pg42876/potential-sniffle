@@ -3,6 +3,11 @@ from si.util.util import manhattan, accuracy_score
 import numpy as np
 
 class KNN(Model):
+
+    """
+    
+    """
+    
     def __init__(self, number_neighboors, classification = True):
         super(KNN).__init__()
         self.number_neighboors = number_neighboors

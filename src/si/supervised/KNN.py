@@ -5,7 +5,7 @@ import numpy as np
 class KNN(Model):
 
     """
-    
+    W
     """
     
     def __init__(self, number_neighboors, classification = True):

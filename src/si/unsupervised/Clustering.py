@@ -109,13 +109,13 @@ class Kmeans:
         changed = False
         count = 0
         old_idxs = np.zeros(X.shape[0]) #Array de zeros
-        while not changed or count < self.max_interactions:
+        while not changed and count < self.max_interactions:
             idxs = np.apply_along_axis(self.get_closest_centroid, axis = 0, arr = X.T)
             centroids = []
             for i in range(self.k):
                 centroids.append(np.mean(X[idxs == i], axis = 0)) #Cálculo dos centróides com base na média (passam a ser os novos pontos)
             self.centroids = np.array(centroids) 
-            changed = np.all(old_idxs == idxs) #O all vai testar se todos os valores; testa se todos os idxs são os antigos
+            changed = np.any(old_idxs == idxs) #O all vai testar se todos os valores; testa se todos os idxs são os antigos
             old_idxs = idxs #Os idxs antigos passam a ser os novos
             count += 1 #Aumenta o número de iterações
             return self.centroids, old_idxs

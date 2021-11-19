@@ -1,11 +1,12 @@
 from model import Model
-from si.util.util import euclidean, accuracy_score
+from si.util.util import euclidean
+from si.util.metrics import accuracy_score
 import numpy as np
 
 class KNN(Model):
 
     """
-    W
+    K Vizinhos Mais Próximos (método lento na fase de previsão)
     """
     
     def __init__(self, number_neighboors, classification = True):
@@ -47,5 +48,3 @@ class KNN(Model):
     def cost(self):
         y_pred = np.ma.apply_along_axis(self.predcit, axis = 0, arr = self.dataset.X.T) #ma: máscara; temos de usar se não vai formatar a previsão
         return accuracy_score(self.dataset.Y, y_pred) #Dá a precisão 
-
-    

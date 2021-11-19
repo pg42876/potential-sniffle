@@ -26,6 +26,7 @@ class VarianceThreshold:
         """
         Vai buscar todas as variáveis não dependentes e calcular a sua variância
         """
+        
         X = dataset.X
         self._var = np.var(X, axis = 0) #Self.var -> guarda os resultados na memória do objeto
 

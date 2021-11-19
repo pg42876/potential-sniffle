@@ -9,7 +9,7 @@ class Dataset:
                  xnames: list = None,
                  yname: str = None):
 
-        """ Tabular Dataset"""
+        """ Tabular Dataset """
         
         if X is None:
             raise Exception("Trying to instanciate a DataSet without any data")
@@ -21,6 +21,8 @@ class Dataset:
     @classmethod
     def from_data(cls, filename, sep = ",", labeled = True):
 
+        #Através de um ficheiro txt cria um dataset
+
         """Creates a DataSet from a data file.
 
         :param filename: The filename
@@ -30,7 +32,6 @@ class Dataset:
         :return: A DataSet object
         :rtype: DataSet
         """
-        #Através de um ficheiro txt cria um dataset
 
         data = np.genfromtxt(filename, delimiter = sep)
         if labeled: #Se a variável for igual a True; labeled -> para ver se tem a última coluna
@@ -69,7 +70,10 @@ class Dataset:
     def __len__(self):
 
         """ Returns the number of data points. """
-        #Criar um função len para que sempre que chamarmos o len retornar o número de linhas para ele saber o que é suposto contar
+
+        """
+        Criar um função len para que sempre que chamarmos o len retornar o número de linhas para ele saber o que é suposto contar
+        """
 
         return self.X.shape[0] #Devolve as linhas
 
@@ -88,13 +92,13 @@ class Dataset:
     def getNumClasses(self):
 
         """ Returns the number of label classes or 0 if the dataset has no dependent variable. """
-        #Vai buscar os valores únicos das variáveis dependentes
 
-        return len(np.unique(self.Y)) if self.hasLabel() else 0
+        return len(np.unique(self.Y)) if self.hasLabel() else 0 #Vai buscar os valores únicos das variáveis dependentes
 
     def writeDataset(self, filename, sep = ","):
 
-        """ Saves the dataset to a file
+        """ 
+        Saves the dataset to a file
         :param filename: The output file path
         :type filename: str
         :param sep: The fields separator, defaults to ","

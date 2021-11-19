@@ -66,7 +66,7 @@ def summary(dataset, format = 'df'):
 def manhattan(x, y): #L1
 
     """
-
+    Distância entre dois pontos é dada pela soma das diferenças absolutas das suas coordenadas.
     """
 
     dist = (np.absolute(x - y)).sum(axis = 1)
@@ -80,17 +80,6 @@ def euclidean(x, y): #L2
 
     dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))
     return dist
-
-def accuracy_score(y_true, y_pred):
-    """
-    Verifica quais são as previsões que são iguais a valores reais
-    """
-    correct = 0
-    for true, pred in zip(y_true, y_pred):
-        if true == pred:
-            correct += 1
-    accuracy = correct / len(y_true)
-    return accuracy
 
 def train_test_split(dataset, split = 0.8):
     n = dataset.X.shape[0]

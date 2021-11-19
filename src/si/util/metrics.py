@@ -13,12 +13,12 @@ def accuracy_score(y_true, y_pred):
     accuracy = correct / len(y_true)
     return accuracy
 
-def mse(y_true, y_pred, squared = True):
-
+def mse(y_true, y_pred, squared=True):
+    
     """
     Mean squared error
     """
-
+    
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
     errors = np.average((y_true - y_pred) ** 2, axis = 0)

@@ -75,7 +75,7 @@ def manhattan(x, y): #L1
 def euclidean(x, y): #L2
 
     """
-    Distância entre dois pontos
+    Distância entre dois pontos é dada 
     """
 
     dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))

@@ -52,3 +52,9 @@ class LogisticRegressionReg(LogisticRegression):
     def __init__(self, gd = False, epochs = 1000, lr = 0.1, lbd = 1):
         super(LogisticRegressionReg, self).__init__(gd = gd, epochs = epochs, lr = lr)
         self.lbd = lbd
+    
+    def train(self, X, Y):
+        pass
+
+    def cost(self, X = None, y = None, theta = None):
+        pass

@@ -4,8 +4,8 @@ from copy import copy
 import warnings
 from si import data
 from src.si.data import Dataset
-from si.util.util import euclidean, manhattan, summary
-from si.util.scale import StandardScaler
+from si.util.Util import euclidean, manhattan, summary
+from si.util.Scale import StandardScaler
 
 class PCA:
 

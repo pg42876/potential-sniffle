@@ -1,6 +1,6 @@
 from model import Model
-from si.util.util import euclidean
-from si.util.metrics import accuracy_score
+from si.util.Util import euclidean
+from si.util.Metrics import accuracy_score
 import numpy as np
 
 class KNN(Model):

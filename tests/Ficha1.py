@@ -1,9 +1,9 @@
 #Imports
 import pandas as pd
 from si.data import Dataset
-from si.util.util import summary
-from si.util.scale import StandardScaler #Standard Scale
-from si.data.feature_selection import f_regression, SelectKBest, VarianceThreshold #Feature Selection
+from si.util.Util import summary
+from si.util.Scale import StandardScaler #Standard Scale
+from si.data.Feature_selection import f_regression, SelectKBest, VarianceThreshold #Feature Selection
 from si.unsupervised.Clustering import Kmeans #Clustering
 import matplotlib.pyplot as plt
 from si.unsupervised.Clustering import PCA #PCA

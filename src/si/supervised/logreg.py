@@ -1,6 +1,6 @@
 from _typeshed import Self
 from .model import Model
-from ..util.util import sigmoide
+from ..util.Util import sigmoide
 import numpy as np
 
 class LogisticRegression(Model):

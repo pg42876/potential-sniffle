@@ -1,3 +1,3 @@
-from .util import *
-from .metrics import *
-from .cv import CrossValidation, GridSearchCV
+from .Util import *
+from .Metrics import *
+from .CV import CrossValidation, GridSearchCV

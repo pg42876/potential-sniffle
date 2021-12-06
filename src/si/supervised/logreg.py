@@ -1,5 +1,5 @@
 from _typeshed import Self
-from .model import Model
+from src.si.supervised.Model import Model
 from ..util.Util import sigmoide
 import numpy as np
 

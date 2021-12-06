@@ -1,4 +1,4 @@
-from .model import Model
+from src.si.supervised.Model import Model
 import numpy as np
 
 def majority(values):
@@ -34,5 +34,3 @@ class Ensemble(Model):
         Y = Y if Y is not None else self.dataset.Y
         y_pred = np.ma.apply_along_axis(self.predcit, axis = 0, arr = X.T)
         return y_pred
-
-    

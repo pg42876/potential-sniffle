@@ -1,5 +1,5 @@
-from si.supervised.model import Model
-from si.util.metrics import mse
+from src.si.supervised.Model import Model
+from src.si.util.Metrics import mse
 import numpy as np
 
 class LinearRegression(Model):

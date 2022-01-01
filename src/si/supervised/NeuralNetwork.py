@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from numpy.core.numeric import outer
 from si.supervised.Model import Model
 from si.util.Metrics import mse
 
@@ -37,8 +36,8 @@ class Dense(Layer):
         self.weights = weights
         self.bias = bias
     
-    def forward(self, input_data):
-        self.input = input_data
+    def forward(self, input):
+        self.input = input
         self.output = np.dot(self.input, self.weights) + self.bias
         return self.output
 
@@ -55,8 +54,8 @@ class Activation(Layer):
 
         self.ativation = activation
     
-    def forward(self, input_data):
-        self.input = input_data
+    def forward(self, input):
+        self.input = input
         self.output = self.ativation(self.input)
         return self.output
 
@@ -77,16 +76,18 @@ class NN(Model):
 
         self.layers = []
         self.loss = mse
+        # self.loss_prime = mse_prime
 
     def add(self, layer):
         self.layers.append(layer)
     
     def fit(self, dataset):
+        self.dataset = dataset
         raise NotImplementedError
 
-    def predict(self, input_data):
+    def predict(self, input):
         assert self.is_fitted, 'Model must be fit befora predicting'
-        output = input_data
+        output = input
         for layer in self.layers:
             output = layer.forward(output)
         return output

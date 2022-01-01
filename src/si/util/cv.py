@@ -1,15 +1,16 @@
 from numpy.core.numeric import tensordot
 from numpy.lib.arraypad import pad
 from si import data
-from .util import train_test_split
+from ..util import train_test_split
 import numpy as np  
 import itertools
 
 class CrossValidation:
 
-    def __init__(self, model, dataset, **kwargs):
+    def __init__(self, model, dataset, score = None, **kwargs):
         self.model = model
         self.dataset = dataset
+        self.score = score
         self.cv = kwargs.get('cv', 3)
         self.split = kwargs.get('split', 0.8)
         self.train_score = None
@@ -98,6 +99,7 @@ class CrossValidationScore:
         train_score = []
         test_score = []
         ds = []
+        true_Y, pred_Y = [], [] #
         for _ in range(self.cv): #O _ serve para representação do valor não variável (não guarda)
             train, test = train_test_split(self.dataset, self.split)
             ds.append((train, test))
@@ -105,14 +107,19 @@ class CrossValidationScore:
             if not self.score:
                 train_score.append(self.model.cost())
                 test_score.append(self.model.cost(test.X, test.Y))
+                pred_Y.extend(list(self.model.predict(test.X))) #
             else:
                 y_train = np.ma.apply_along_axis(self.model.predict, axis = 0, arr = train.X.T)
                 train_score.append(self.score(train.Y, y_train))
                 y_test = np.ma.apply_along_axis(self.model.predict, axis = 0, arr = train.X.T)
                 test_score.append(self.score(test.Y, y_test))
+                pred_Y.extend(list(y_test)) #
+            true_Y.extend(list(test.Y)) #
         self.train_score = train_score #Guarda os dados que estavam escritos anteriormente de forma a preservar os mesmos
         self.test_score = test_score #Guarda os dados que estavam escritos anteriormente de forma a preservar os mesmos
         self.ds = ds
+        self.true_Y = np.array(true_Y) #
+        self.pred_Y = np.array(pred_Y) #
         return train_score, test_score
 
     def toDataFrame(self):

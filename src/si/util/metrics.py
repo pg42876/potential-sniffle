@@ -65,10 +65,7 @@ class ConfusionMatrix:
         self.conf = None
 
     def calc(self):
-        self.conf = pd.crosstab(self.true_y, self.pred_y, rownames = ['Actual'], colnames = ['Predicted'], margins = True)
+        self.conf = pd.crosstab(self.true_y, self.pred_y, rownames = ['Actual Values'], colnames = ['Predicted Values'], margins = True)
 
     def toDataframe(self):
-        return self.conf
-
-    def __call__(self):
-        self.calc()
+        return pd.DataFrame(self.calc())

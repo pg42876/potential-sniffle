@@ -20,7 +20,7 @@ def calc_pad_dims_2D(X_shape, out_dim, kernel_shape, stride):
     out_rows1 = int(1 + (in_rows + 2 * pr - fr) / stride)
     out_cols1 = int(1 + (in_cols + 2 * pc - fc) / stride)
 
-    #Add asymmetric padding pixels to right / bottom
+    # add asymmetric padding pixels to right / bottom
     pr1, pr2 = pr, pr
     if out_rows1 == out_rows - 1:
         pr1, pr2 = pr, pr + 1

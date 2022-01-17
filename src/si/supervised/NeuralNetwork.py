@@ -282,7 +282,17 @@ class MaxPoling(Pooling2D):
         return output
 
     def backward(self, output_error, lr):
-        pass
+        n, w, h, d = self.X_shape
+
+        dX_col = np.zeros_like(self.X_shape)
+        dout_col = output_error.transpose(2, 3, 0, 1).ravel()
+
+        dX = self.dpool(dX_col, dout_col, self.max_idx)
+
+        dX = col2im(dX_col, (n * d, 1, h, w), self.size, padding = 0, stride = self.stride)
+        dX = dX.reshape(self.X_shape)
+
+        return dX
 
     def iterate_regions(self):
         for i in range(self.out_h):

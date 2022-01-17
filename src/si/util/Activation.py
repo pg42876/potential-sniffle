@@ -17,7 +17,7 @@ class ActivationBase(ABC):
          Apply the activation function to an input
          """
 
-         if z.ndim == 1: #Se a dimensão de z for 1
+         if z.ndim == 1: # se a dimensão de z for 1
             z = z.reshape(1, -1) 
          return self.fn(z)
     
@@ -100,7 +100,7 @@ class LeakyReLU(ActivationBase):
         super().__init__()
 
     def __str__(self):
-        return "Leaky ReLU(alpha={})".format(self.alpha)
+        return "Leaky ReLU(alpha = {})".format(self.alpha)
 
     def fn(self, z):
         _z = z.copy()

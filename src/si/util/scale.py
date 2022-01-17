@@ -30,8 +30,8 @@ class StandardScaler:
         dataset : A Dataset object to be standardized
         """
         
-        self.mean = np.mean(dataset.X, axis = 0) #Média do dataset
-        self.var = np.var(dataset.X, axis = 0) #Variância do dataset
+        self.mean = np.mean(dataset.X, axis = 0) # média do dataset
+        self.var = np.var(dataset.X, axis = 0) # variância do dataset
 
     def transform(self, dataset, inline = False):
 
@@ -46,8 +46,8 @@ class StandardScaler:
         A Dataset object with standardized data.
         """
 
-        Z = (dataset.X - self.mean) / np.sqrt(self.var) #Standart score
-        if inline: #Inline: se for True -> acrescenta a coluna da standardização ao dataset; se for False -> cria uma nova coluna (Z) e copia as outras
+        Z = (dataset.X - self.mean) / np.sqrt(self.var) # standart score
+        if inline: # inline: se for True -> acrescenta a coluna da standardização ao dataset; se for False -> cria uma nova coluna (Z) e copia as outras
             dataset.X = Z
             return dataset
         else:

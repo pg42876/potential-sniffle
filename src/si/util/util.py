@@ -9,8 +9,13 @@ __all__ = ['label_gen', 'summary']
 
 def label_gen(n):
 
-    """ Generates a list of n distinct labels similar to Excel"""
-    #Dá o nome às colunas
+    """ 
+    Generates a list of n distinct labels similar to Excel
+    """
+    
+    """
+    Dá o nome às colunas
+    """
 
     def _iter_all_strings():
         size = 1
@@ -37,33 +42,33 @@ def summary(dataset, format = 'df'):
     """
 
     if dataset.hasLabel():
-        data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1))) #reshape -> serve para transformar em array; esta linha dá uma nova forma ao array (vai ter as linhas dataset.Y e uma coluna)
+        data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1))) # reshape -> serve para transformar em array; esta linha dá uma nova forma ao array (vai ter as linhas dataset.Y e uma coluna)
         names = []
         for d in dataset._xnames:
             names.append(d)
-        names.append(dataset._yname) #Abre-se a lista names e juntam-se os nomes de xnames e de yname
+        names.append(dataset._yname) # abre-se a lista names e juntam-se os nomes de xnames e de yname
     else:
-        data = dataset.X.copy() #Para salvaguardar o dataset
+        data = dataset.X.copy() # para salvaguardar o dataset
         names = [dataset._xnames]
     mean = np.mean(data, axis = 0)
     var = np.var(data, axis = 0)
     maximo = np.max(data, axis = 0)
     minimo = np.min(data, axis = 0)
     stats = {}
-    for i in range(data.shape[1]): #Guarda tudo num dicionário
-        statistic = {'mean': mean[i], #Média da coluna
-                    'var': var[i], #Variância da coluna
-                    'max': maximo[i], #Máximo da coluna
-                    'min': minimo[i] #Mínimo da coluna
+    for i in range(data.shape[1]): # guarda tudo num dicionário
+        statistic = {'mean': mean[i], # média da coluna
+                    'var': var[i], # variância da coluna
+                    'max': maximo[i], # máximo da coluna
+                    'min': minimo[i] # mínimo da coluna
                     }
         stats[names[i]] = statistic
-    if format == 'df': #Transforma num dataframe
+    if format == 'df': # transforma num dataframe
         df = pd.DataFrame(stats)
         return df
     else:
         return stats
 
-def manhattan(x, y): #L1
+def manhattan(x, y): # L1
 
     """
     Distância entre dois pontos é dada pela soma das diferenças absolutas das suas coordenadas.
@@ -72,10 +77,10 @@ def manhattan(x, y): #L1
     dist = (np.absolute(x - y)).sum(axis = 1)
     return dist
 
-def euclidean(x, y): #L2
+def euclidean(x, y): # L2
 
     """
-    Distância entre dois pontos é dada 
+    Distância entre dois pontos é dada pela média das diferenças das suas coordenadas ao quadrado.
     """
 
     dist = np.sqrt(np.sum((x - y) ** 2, axis = 1))
@@ -111,7 +116,6 @@ def to_categorical(y, num_classes = None, dtype = 'float32'):
     output_shape = input_shape + (num_classes,)
     categorical = np.reshape(categorical, output_shape)
     return categorical
-
 
 def minibatch(X, batchsize = 256, shuffle = True):
     N = X.shape[0]

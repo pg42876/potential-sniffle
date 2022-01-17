@@ -1,5 +1,5 @@
-from src.si.supervised.Model import Model
 import numpy as np
+from src.si.supervised.Model import Model
 
 def majority(values):
     return max(set(values), key = values.count)
@@ -8,13 +8,14 @@ def average(values):
     return sum(values) / len(values)
 
 class Ensemble(Model):
+
     def __init__(self, models, fvote, score):
         super().__init__()
         self.models = models
         self.fvote = fvote
         self.score = score
     
-    def fit(self, dataset):
+    def fit(self, dataset): # vai fazer fit dos modelos
         self.dataset = dataset
         for model in self.models:
             model.fit(dataset)
@@ -26,11 +27,11 @@ class Ensemble(Model):
         vote = self.fvote(preds)
         return vote
 
-    def cost(self, X = None, Y = None):
+    def cost(self, X = None, y = None):
         if X is not None:
             X = X 
         else:
             self.dataset.X
-        Y = Y if Y is not None else self.dataset.Y
+        y = y if y is not None else self.dataset.Y
         y_pred = np.ma.apply_along_axis(self.predcit, axis = 0, arr = X.T)
         return y_pred

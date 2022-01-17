@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
 import numpy as np
+from abc import ABC, abstractmethod
 from si.supervised.Model import Model
-from si.util.Metrics import mse
+from si.util.Metrics import mse, mse_prime
 from si.util.im2col import pad2D, im2col, col2im
+from si.util.Activation import *
 
 class Layer(ABC):
 
@@ -31,9 +32,9 @@ class Dense(Layer):
     
     def setWeights(self, weights, bias):
         if (weights.shape != self.weights.shape):
-            raise ValueError(f"Shapes mismatch {weights.shape} and")
+            raise ValueError(f"Shapes mismatch {weights.shape} and {self.weights.shape}")
         if (bias.shape != self.bias.shape):
-            raise ValueError(f"Shapes mismatch {bias.shape} and")
+            raise ValueError(f"Shapes mismatch {bias.shape} and {self.bias.shape}")
         self.weights = weights
         self.bias = bias
     
@@ -44,13 +45,13 @@ class Dense(Layer):
 
     def backward(self, output_error, learning_data):
         weights_error = np.dot(self.input.T, output_error)
-        bias_error = np.sum(output_error, axis=0)
+        bias_error = np.sum(output_error, axis = 0)
         input_error = np.dot(output_error, self.weights.T)
 
-        # Update parameters
+        # update parameters
         self.weights -= learning_data * weights_error
         self.bias -= learning_data * bias_error
-        return 
+        return input_error
     
 class Activation(Layer):
     
@@ -67,8 +68,8 @@ class Activation(Layer):
         self.output = self.ativation(self.input)
         return self.output
 
-    def backward(self, output_Error, learning_data):
-        return np.multiply(self.activation.prime(self.input), output_Error)
+    def backward(self, output_error, lr):
+        return np.multiply(self.activation.prime(self.input), output_error)
 
 class NN(Model):
 
@@ -84,7 +85,7 @@ class NN(Model):
 
         self.layers = []
         self.loss = mse
-        # self.loss_prime = mse_prime
+        self.loss_prime = mse_prime
 
     def add(self, layer):
         self.layers.append(layer)
@@ -96,16 +97,16 @@ class NN(Model):
         for epoch in range(self.epochs):
             output = X
 
-            # Forward propagation
+            # forward propagation
             for layer in self.layers:
                 output = layer.forward(output)
 
-            # Backward propagation
+            # backward propagation
             error = self.loss_prime(y, output)
             for layer in reversed(self.layers):
                 error = layer.backward(error, self.lr)
 
-            # Calculate average error on all samples
+            # calculate average error on all samples
             err = self.loss(y, output)
             self.history[epoch] = err
             if self.verbose:
@@ -125,16 +126,16 @@ class NN(Model):
             for batch in range(batches):
                 output = X[batch * batchsize:(batch + 1) * batchsize, ]
 
-                # Forward propagation
+                # forward propagation
                 for layer in self.layers:
                     output = layer.forward(output)
 
-                # Backward propagation
+                # backward propagation
                 error = self.loss_prime(y[batch * batchsize:(batch + 1) * batchsize, ], output)
                 for layer in reversed(self.layers):
                     error = layer.backward(error, self.lr)
 
-                # Calcule average error
+                # calcule average error
                 erro = self.loss(y[batch * batchsize:(batch + 1) * batchsize, ], output)
                 self.history_batch[0, batch] = erro
             self.history[epoch] = np.average(self.history_batch)
@@ -151,10 +152,10 @@ class NN(Model):
             output = layer.forward(output)
         return output
 
-    def cost(self, X = None, Y = None):
+    def cost(self, X = None, y = None):
         assert self.is_fitted, 'Model must be fit befora predicting'
         X = X if X is not None else self.dataset.X
-        Y = Y if Y is not None else self.dataset.Y
+        y = y if y is not None else self.dataset.Y
         output = self.predcit(X)
         return self.loss(X, output)
 
@@ -162,7 +163,7 @@ class Flatten(Layer):
 
     def forward(self, input):
         self.input_shape = input.shape
-        # Flattern all but the 1st dimension
+        # flattern all but the 1st dimension
         output = input.reshape(input.shape[0], -1)
         return output
     

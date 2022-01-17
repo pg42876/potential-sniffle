@@ -1,7 +1,6 @@
-from .model import Model
-from ..util import accuracy_score
 import numpy as np
-
+from .Model import Model
+from ..util import accuracy_score
 
 class Node:
 
@@ -59,6 +58,7 @@ class DecisionTree(Model):
         '''
         Wrapper for the impurity calculation. Calculates probas first and then passses them to the Gini criterion.
         '''
+        
         return self.gini(self.nodeProbas(y))
 
     def calcBestSplit(self, X, y):
@@ -113,7 +113,7 @@ class DecisionTree(Model):
 
         return bestSplitCol, bestThresh, x_left, y_left, x_right, y_right
 
-    def buildDT(self, X, y, node):
+    def buildDT(self, X, y, node): # constrói a decison tree
         
         '''
         Recursively builds decision tree from the top to bottom

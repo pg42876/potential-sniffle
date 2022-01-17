@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from si.util.Util import label_gen
 
-__all__ = ['Dataset']
+__all__ = ['Dataset', label_gen]
 
 class Dataset:
     def __init__(self, X = None, Y = None,

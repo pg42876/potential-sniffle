@@ -5,7 +5,7 @@ import pandas as pd
 # Y is reserved to idenfify dependent variables
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
 
-__all__ = ['label_gen', 'summary', 'train_test_split']
+__all__ = ['label_gen', 'summary', 'train_test_split', 'sigmoide', 'manhattan', 'euclidean', 'add_intersect']
 
 def label_gen(n):
 
@@ -87,17 +87,17 @@ def euclidean(x, y): # L2
     return dist
 
 def train_test_split(dataset, split = 0.8):
-    n = dataset.X.shape[0]
-    m = int(split * n)
-    array = np.arange(n)
-    np.random.shuffle(array)
-    from src.si.data.Dataset import Dataset
-    train = Dataset(dataset.X[array[:m]], dataset.Y[array[:m]], dataset.xnames, dataset.yname)
-    test = Dataset(dataset.X[array[m:]], dataset.Y[array[m:]], dataset.xnames, dataset.yname)
+    n = dataset.X.shape[0]  # n de linhas
+    m = int(split * n)  # n de samples para o train
+    arr = np.arange(n)
+    np.random.shuffle(arr)
+    from ..data import Dataset
+    train = Dataset(dataset.X[arr[:m]], dataset.Y[arr[:m]], dataset.xnames, dataset.yname)
+    test = Dataset(dataset.X[arr[m:]], dataset.Y[arr[m:]], dataset.xnames, dataset.yname)
     return train, test
 
 def sigmoide(z):
-    return 1 / (1 + np.exp(- z))
+    return 1/(1+np.exp(-z))
 
 def add_intersect(X):
     return np.hstack((np.ones((X.shape[0], 1)), X))

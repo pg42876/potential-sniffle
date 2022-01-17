@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
-from si.util.util import train_test_split
+from si.util.Util import train_test_split
 
-class CrossValidationScore:
+class CrossValidation:
 
-    def __init__(self, model, dataset, score=None, **kwargs):
+    def __init__(self, model, dataset, score = None, **kwargs):
         self.model = model
         self.dataset = dataset
         self.cv = kwargs.get("cv", 3)
@@ -26,23 +26,22 @@ class CrossValidationScore:
                 train_scores.append(self.model.cost())
                 test_scores.append(self.model.cost(test.X, test.Y))
             else:
-                y_train = np.ma.apply_along_axis(self.model.predict, axis=1, arr=train.X)
+                y_train = np.ma.apply_along_axis(self.model.predict, axis = 1, arr = train.X)
                 train_scores.append(self.score(train.Y, y_train))
-                y_test = np.ma.apply_along_axis(self.model.predict, axis=1, arr=test.X)
+                y_test = np.ma.apply_along_axis(self.model.predict, axis = 1, arr = test.X)
                 test_scores.append(self.score(test.Y, y_test))
         self.train_scores = train_scores
         self.test_scores = test_scores
         self.ds = ds
         return train_scores, test_scores
 
-    def toDataframe(self):
+    def toDataFrame(self):
         assert self.train_scores and self.test_scores, "Need to run trainning before hand"
         return np.array((self.train_scores, self.test_scores))
 
-
 class GridSearchCV:
 
-    def __init__(self, model, dataset, parameters, score=None, **kwargs):
+    def __init__(self, model, dataset, parameters, score = None, **kwargs):
         self.model = model
         self.dataset = dataset
         self.score = score
@@ -64,13 +63,13 @@ class GridSearchCV:
         for comb in list(product(*values)):
             for attr, value in zip(attrs, comb):
                 setattr(self.model, attr, value)
-            cv = CrossValidationScore(self.model, self.dataset, self.score, **self.kwargs)
+            cv = CrossValidation(self.model, self.dataset, self.score, **self.kwargs)
             cv.run()
             self.results.append(cv.run())
         return self.results
 
-    def toDataframe(self):
+    def toDataFrame(self):
         assert self.results, "Need to run trainning before hand"
         n_cv = len(self.results[0][0])
         data = np.hstack((np.array([res[0] for res in self.results]), np.array([res[1] for res in self.results])))
-        return pd.DataFrame(data=data, columns=[f"CV_{i+1} train" for i in range(n_cv)]+[f"CV_{i+1} test" for i in range(n_cv)])
+        return pd.DataFrame(data = data, columns = [f"CV_{i + 1} train" for i in range(n_cv)] + [f"CV_{i + 1} test" for i in range(n_cv)])

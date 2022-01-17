@@ -1,6 +1,6 @@
 import numpy as np
 from .Model import Model
-from si.util.metrics import accuracy_score
+from ..util import accuracy_score
 
 class Node:
 

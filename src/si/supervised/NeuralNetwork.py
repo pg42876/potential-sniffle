@@ -167,7 +167,7 @@ class Flatten(Layer):
         output = input.reshape(input.shape[0], -1)
         return output
     
-    def backward(self, erro, learning_data):
+    def backward(self, erro, lr):
         return erro.reshape(self.input_shape)
 
 class Conv2D(Layer):
@@ -178,8 +178,8 @@ class Conv2D(Layer):
         self.out_ch = layer_depth
         self.stride = stride
         self.padding = padding
-        self.weights = np.random.rand(kernel_shape[0], kernel_shape[1], self.in_ch, self.out_ch) - 0.5 # Weights
-        self.bias = np.zeros((self.out_ch, 1)) # Bias
+        self.weights = np.random.rand(kernel_shape[0], kernel_shape[1], self.in_ch, self.out_ch) - 0.5 # weights
+        self.bias = np.zeros((self.out_ch, 1)) # bias
 
     def forward(self, input):
         s = self.stride
@@ -189,11 +189,11 @@ class Conv2D(Layer):
         fr, fc, in_ch, out_ch = self.weights.shape
         n_ex, in_rows, in_cols, in_ch = input.shape
 
-        # Compute the dimensions of the convolution output
+        # compute the dimensions of the convolution output
         out_rows = int((in_rows + pr1 + pr2 - fr) / s + 1)
         out_cols = int((in_cols + pc1 + pc2 - fc) / s + 1)
 
-        # Convert X and W into the appropriate 2D matrices and take their product
+        # convert X and W into the appropriate 2D matrices and take their product
         self.X_col, _ = im2col(input, self.weights.shape, p, s)
         W_col = self.weights.transpose(3, 2, 0, 1).reshape(out_ch, -1)
         output_data = (W_col @ self.X_col + self.bias).reshape(out_ch, out_rows, out_cols, n_ex).transpose(3, 1, 2, 0)
@@ -202,21 +202,72 @@ class Conv2D(Layer):
     def backward(self, erro, learning_data):
         fr, fc, in_ch, out_ch = self.weights.shape
         p = self.padding
-        db = np.sum(erro, axis=(0, 1, 2))
+
+        db = np.sum(erro, axis = (0, 1, 2))
         db = db.reshape(out_ch,)
+
         dout_reshaped = erro.transpose(1, 2, 3, 0).reshape(out_ch, -1)
         dW = dout_reshaped @ self.X_col.T
         dW = dW.reshape(self.weights.shape)
+
         W_reshape = self.weights.reshape(out_ch, -1)
         dX_col = W_reshape.T @ dout_reshaped
         input_error = col2im(dX_col, self.X_shape, self.weights.shape, (p, p, p, p), self.stride)
+
         self.weights -= learning_data * dW
         self.bias -= learning_data * db
         return input_error
 
-class MaxPoling(Layer):
+class Pooling2D(Layer):
+
+    def __init__(self, size=2, stride=2):
+        self.size = size
+        self.stride = stride
+
+    def pool(X_col):  # self?
+        raise NotImplementedError
+
+    def dpool(dX_col, dout_col, pool_cache):  # self?
+        raise NotImplementedError
+
+    def forward(self, input):
+        self.X_shape = input.shape
+        n, h, w, d = input.shape  # comprimento, altura e número das imagens
+        h_out = (h - self.size) / self.stride + 1
+        w_out = (w - self.size) / self.stride + 1
+        if not w_out.is_intiger() or not h_out.is_intiger():
+            raise Exception("Invalid output dimension")
+        h_out, w_out = int(h_out), int(w_out)
+        X_reshaped = input.reshape()
+        self.X_col = im2col(X_reshaped, self.size, pad = 0, stride = self.stride)
+
+        out, self.max_idx = self.pool(self.X_col)
+        out = out.reshape(h_out, w_out, n, d)
+        out = out.transpose(3, 2, 0, 1)
+        return out
+
+    def backward(self, erro, learning_rate):
+        n, w, h, d = self.X_shape
+        dX_col = np.zeros_like(self.X_col)
+        dout_col = erro.transpose(2, 3, 0, 1).ravel()
+        dX = self.dpool(dX_col, dout_col, self.max_idx)
+        dX = col2im(dX_col, (n*d, h, w, 1), self.size, pad = 0, stride = self.stride)
+        dX = dX.reshape(self.X_shape)
+        return dX
+
+class MaxPoling(Pooling2D):
+
     def __init__(self, region_shape):
         self.region_h, self.region_w = region_shape
+
+    def pool(X_col):
+        max_idx = np.argmax(X_col, axis=0)
+        out = X_col[max_idx, range(max_idx.size)]
+        return out, max_idx
+
+    def dpool(dX_col, dout_col, pool_cache):
+        dX_col[pool_cache, range(dout_col.size)] = dout_col
+        return dX_col
 
     def forward(self, input_data):
         self.X_input = input_data
@@ -238,24 +289,3 @@ class MaxPoling(Layer):
             for j in range(self.out_w):
                 image = self.X_input[(i * self.region_h) : (i * self.region_h + 2), (j * self.region_h) : (j * self.region_h + 2)]
                 yield image, i, j
-
-class Pooling2D(Layer):
-
-    def __init__(self):
-        pass
-
-    def forward(self, input):
-        self.X_shape = input.shape
-        n, h, w, d = input.shape
-        h_out = (h - self.size) / self.stride + 1
-        w_out = (w - self.size) / self.stride + 1
-        if not w_out.is_integer() or h_out.is_integer():
-            raise Exception('Invalid output dimension!')
-        h_out = int(h_out)
-        w_out = int(w_out)
-        X_reshape = input.reshape(n * d, h, w, 1)
-        self.X_col = im2col(X_reshape, self.size, self.size, padding = 0, stride = self.stride)
-        # CONTINUAÇÃO
-
-    def backward(self, output_error, learning_data):
-        pass

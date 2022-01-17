@@ -1,9 +1,8 @@
 import numpy as np
-from src.si.util.activation import *
-from src.si.util.metrics import mse, mse_prime
-from src.si.supervised.Model import Model
-from src.si.util.im2col import pad2D, im2col, col2im
-
+from si.util.activation import *
+from si.util.metrics import mse, mse_prime
+from si.supervised.Model import Model
+from si.util.im2col import pad2D, im2col, col2im
 
 class Layer(ABC):
     def __init__(self):

@@ -1,5 +1,5 @@
 import numpy as np
-from src.si.util.scale import StandardScaler
+from si.util.scale import StandardScaler
 import pandas as pd
 
 class PCA:

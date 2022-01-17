@@ -1,8 +1,7 @@
 import numpy as np
-from .Model import Model
+from si.supervised.Model import Model
 from src.si.data.dataset import Dataset
 from src.si.util.metrics import mse
-
 
 class LinearRegression(Model):
     def __init__(self, gd=False, epochs=1000, lr=0.001):

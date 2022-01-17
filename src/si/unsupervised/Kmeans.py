@@ -1,5 +1,5 @@
-from src.si.util.util import euclidean, manhattan
-from src.si. data import Dataset
+from si.util.util import euclidean, manhattan
+from si.data.dataset import Dataset
 import numpy as np
 
 class KMeans:

@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-
 def accuracy_score(y_true, y_pred):
     """
     Classification performance metric that computes the accuracy of y_true

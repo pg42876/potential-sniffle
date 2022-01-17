@@ -1,7 +1,6 @@
-from .Model import Model
+from si.supervised.Model import Model
 import numpy as np
-from ..util.util import sigmoide, add_intersect
-
+from si.util.util import sigmoide, add_intersect
 
 class LogisticRegression(Model):
     def __init__(self, epochs=1000, lr=0.001):

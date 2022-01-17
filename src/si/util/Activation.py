@@ -1,7 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
 
-
 class ActivationBase(ABC):
     def __init__(self, **kwargs):
         """Initialize the ActivationBase object"""

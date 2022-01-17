@@ -1,6 +1,5 @@
-from .Model import Model
+from si.supervised.Model import Model
 import numpy as np
-
 
 def majority(values):
     return max(set(values), key=values.count)

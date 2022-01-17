@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
-
 from si.util.util import train_test_split
-
 
 class CrossValidationScore:
 

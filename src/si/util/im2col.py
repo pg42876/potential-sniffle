@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def calc_pad_dims_2D(X_shape, out_dim, kernel_shape, stride):
     if not isinstance(X_shape, tuple):
         raise ValueError("`X_shape` must be of type tuple")

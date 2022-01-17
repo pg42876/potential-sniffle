@@ -1,9 +1,8 @@
 import numpy as np
 from copy import copy
 import warnings
-from ..data import Dataset
+from si.data.dataset import Dataset
 import scipy.stats as stats
-
 
 class VarianceThreshold:
     def __init__(self, threshold=0):

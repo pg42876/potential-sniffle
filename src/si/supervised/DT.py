@@ -1,7 +1,6 @@
-from src.si.supervised.Model import Model
-from src.si.util.metrics import accuracy_score
+from si.supervised.Model import Model
+from si.util.metrics import accuracy_score
 import numpy as np
-
 
 class Node:
     """Implementation of a simple binary tree for DT classifier."""
@@ -18,7 +17,6 @@ class Node:
         self.depth = None
         # if it is the root Node or not
         self.is_terminal = False
-
 
 class DecisionTree(Model):
 

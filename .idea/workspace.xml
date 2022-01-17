@@ -10,6 +10,7 @@
       <change beforePath="$PROJECT_DIR$/scripts/Ficha1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha1.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Ficha2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha2.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Ficha3.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha3.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Ficha4.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha4.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Ficha5.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha5.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/data/feature_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/data/feature_selection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/supervised/Ensemble.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/Ensemble.py" afterDir="false" />
@@ -131,7 +132,7 @@
       <workItem from="1636996126692" duration="524000" />
       <workItem from="1642381353611" duration="776000" />
       <workItem from="1642382191783" duration="5287000" />
-      <workItem from="1642412144129" duration="11494000" />
+      <workItem from="1642412144129" duration="13066000" />
     </task>
     <servers />
   </component>

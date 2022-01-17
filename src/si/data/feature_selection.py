@@ -1,129 +1,84 @@
 import numpy as np
-from scipy import stats
-from scipy.stats import f_oneway
-from scipy.stats import f
 from copy import copy
-from .Dataset import Dataset
 import warnings
+from ..data import Dataset
+import scipy.stats as stats
+
 
 class VarianceThreshold:
-
-    def __init__ (self, threshold = 0):
-
-        # serve para fazer a filtragem dos dados
-        
-        """  
-        The variance threshold is a simple baseline approach to (...)
-        It removes all features which variance doesn't meet some (...)
+    def __init__(self, threshold=0):
         """
-
+        the variance threshold is a simple baseline approach to feature selection
+        it removes all features which variance doesn't meet some threshold limit
+        it removes all zero-variance features, i.e..
+        """
+        self.var = None
         if threshold < 0:
-            warnings.warn('The threshold must be a non-negative value.')
-        self.threshold = threshold
+            raise Exception('Threshold must be a non negative value')
+        else:
+            self.threshold = threshold
 
-    def fit (self, dataset):
+    def fit(self, dataset):  # calcula a variancia
+        X = dataset.X  # variaveis nao dependentes
+        self.var = np.var(X, axis=0)  # aplica a variancia por linahs e guarda em self.var
 
-        """
-        Vai buscar todas as variáveis não dependentes e calcular a sua variância
-        """
-        
+    def transform(self, dataset, inline = False):  # escolhe as variaveis que são maiores do que o threshold
         X = dataset.X
-        self._var = np.var(X, axis = 0) # self.var -> guarda os resultados na memória do objeto
-
-    def transform (self, dataset, inline = False):
-        X = dataset.X
-        cond = self._var > self.threshold # guarda todas as variâncias -> array de bolianos (True ou False)
-        idxs = []
-        for a in range(len(cond)): # seleção dos índices
-            if cond[a]: # is True:
-                idxs.append(a) # faz o append do índice se a variância for maior do que o threshold
-        X_trans = X[:, idxs] # seleção das features que nos interessam
-        xnames = []
-        for b in idxs:
-            xnames.append(dataset._xnames[b]) # seleção do nome das features (colunas)
-        if inline: # is True: ; altera o dataset por completo; se for True -> o dataset vai ser transformado com as novas condições (guarda por cima do dataset existente)
+        cond = self.var > self.threshold  #  array de booleanos
+        ind = []
+        for i in range(len(cond)):
+            if cond[i]:
+                ind.append(i)  # se a cond for verdadeira, vai dar append do indice dessa condição
+        X_trans = X[:, ind]
+        xnames = [dataset._xnames[i] for i in ind]
+        if inline:
             dataset.X = X_trans
             dataset._xnames = xnames
             return dataset
-        else: # se for False -> criação de um novo dataset, existindo na mesma o velho
-            return Dataset(X_trans, copy(dataset.Y), xnames, copy(dataset._yname)) # faz-se o copy com y porque estamos a ver as variáveis independentes
+        else:
+            return Dataset(X_trans, copy(dataset.Y), xnames, copy(dataset._yname))
 
-    def fit_transform(self, dataset, inline = False):
-        self.fit(dataset) # recebe um dataset e corre o fit (variâncias) com esse dataset
-        return self.transform(dataset, inline = inline)
+    def fit_transform(self,dataset, inline = False):
+        self.fit(dataset)
+        return self.transform(dataset, inline)
+
 
 class SelectKBest:
+    def __init__(self, k, funcao_score="f_regress"):
+        self.feat_num = k
+        if funcao_score == "f_regress":
+            self.function = f_regress
+        self.fscore = None
+        self.pvalue = None
 
-    """
-    Semelhante à VarianceThreshold, mas em vez de trabalhar com variâncias trabalha com scores
-    """
+    def fit(self, dataset):  # calcular o fscore e o pvalue
+        self.fscore, self.pvalue = self.function(dataset)
 
-    def __init__(self, k, score_fun = 'f_regression'):
-        if score_fun == 'f_regression':
-            self.score_fun = f_regression
-        elif score_fun == 'f_classification':
-            self.score_fun == f_classification
-        else:
-            raise Exception("Score function not available \n Score functions: f_classification, f_regression")
-        if k <= 0:
-            raise Exception("K value invalid. K-value must be > 0") # número top selecionado (melhor valor)
-        else:
-            self.k = k
+    def transform(self, dataset, inline=False):
+        X = copy(dataset.X) # valores de x
+        xnames = copy(dataset._xnames)
+        sel_list = np.argsort(self.fscore)[-self.feat_num:]
+        # np.argsort(self.fscore) - retorna indices ordenados de acordo com o fscore
+        # [-self.feat_num:] - vai buscar os ultimos indices, uma vez que queremos os scores mais altos
+        featdata = X[:, sel_list] # selecionar as features
+        featnames = [xnames[index] for index in sel_list]  # vai buscar os nomes através do indice
+        if inline: # se for true, faz a alteração no dataset
+            dataset.X = featdata
+            dataset._xnames = featnames
+            return dataset
+        else: # se for false, cria um dataset novo
+            return Dataset(featdata, copy(dataset.Y), featnames, copy(dataset._yname))
 
-    def fit(self, dataset):
-        self.Fscore, self.pvalue = self.score_fun(dataset) # vai buscar os valores da regressão de Pearson
-    
-    def transform(self, dataset, inline = False):
-        data = copy(dataset.X)
-        name = copy(dataset._xnames)
-        if self.k > data.shape[1]: # self.k não pode ser maior que o número de colunas
-            warnings.warn('K value greather than the number of features available.')
-            self.k = data.shape[1] # tuplo com as dimensões do array
-        lista = np.argsort(self.Fscore)[-self.k:] # sort das colunas pelo Fscore e depois vai buscar os índices; como temos (-) vai buscar os últimos valores porque queremos os que têm maior score, dependendo do k
-        datax = data[:, lista] # dados das features selecionadas
-        xnames = [name[ind] for ind in lista]
-        if inline:
-            dataset.X = datax
-            dataset.xnames = xnames
-            return dataset 
-        else:
-            return Dataset(datax, copy(dataset.Y), xnames, copy(dataset._yname))
-     
-    def fit_transform(self, dataset, inline = False):
-        self.fit(dataset) # recebe um dataset e corre o fit (scores) com esse dataset
-        return self.transform(dataset, inline = inline)
+    def fit_transform(self, dataset, inline=False):  # fit to data, then transform it
+        self.fit(dataset)
+        return self.transform(dataset, inline=inline)
 
-def f_classification (dataset): 
 
-    """
-    ANOVA: avalia afirmações através das médias das populações.
-    A análise permite verificar se exite ou não diferença significativa entre as
-    médias e se os fatores têm influência nas variáveis dependentes.
-    """
-
-    X = dataset.X
-    y = dataset.y
-    aa = []
-    for a in np.unique(y):
-        aa.append(X[y == a, :]) 
-    F_stat, pvalue = f_oneway(*aa)
+def f_regress(dataset):  # testa a hipotese nula de que 2 ou mais grupos tem a mesma população média
+    X, y = dataset.getXy()
+    args = []
+    for k in np.unique(y):  # valores unicos em y
+        args.append(X[y == k, :])
+    from scipy.stats import f_oneway
+    F_stat, pvalue = f_oneway(*args)
     return F_stat, pvalue
-
-def f_regression (dataset):
-
-    """
-    REGRESSÃO DE PEARSON: mede o grau da correlação entre duas variáveis de uma escala métrica.
-    Varia entre -1 e 1:
-    - p = 1: correlação perfeita positiva entre as duas variáveis;
-    - p = -1: correlação perfeita negativa entre as duas variáveis, isto é, quando uma aumenta, a outra diminui;
-    - p = 0: significa que as duas variáveis não dependem linearmente uma da outra.
-    """
-
-    X = dataset.X
-    y = dataset.Y
-    cor_coef = np.array([stats.pearsonr(X[:, i], y)[0] for i in range(X.shape[1])])
-    dof = y.size - 2 # graus de liberdade
-    cor_coef_sqrd = cor_coef ** 2
-    F = cor_coef_sqrd / (1 - cor_coef_sqrd) * dof
-    p = f.sf(F, 1, dof)
-    return F, p

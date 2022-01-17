@@ -255,10 +255,12 @@ class Pooling2D(Layer):
         dX = dX.reshape(self.X_shape)
         return dX
 
-class MaxPoling(Pooling2D):
+class MaxPooling(Pooling2D):
 
-    def __init__(self, region_shape):
+    def __init__(self, region_shape, size = 2, stride = 2):
         self.region_h, self.region_w = region_shape
+        self.size = size
+        self.stride = stride
 
     def pool(X_col):
         max_idx = np.argmax(X_col, axis=0)

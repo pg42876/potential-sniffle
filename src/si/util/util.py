@@ -5,7 +5,7 @@ import pandas as pd
 # Y is reserved to idenfify dependent variables
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
 
-__all__ = ['label_gen', 'summary']
+__all__ = ['label_gen', 'summary', 'train_test_split']
 
 def label_gen(n):
 
@@ -44,12 +44,12 @@ def summary(dataset, format = 'df'):
     if dataset.hasLabel():
         data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1))) # reshape -> serve para transformar em array; esta linha dá uma nova forma ao array (vai ter as linhas dataset.Y e uma coluna)
         names = []
-        for d in dataset._xnames:
+        for d in dataset.xnames:
             names.append(d)
-        names.append(dataset._yname) # abre-se a lista names e juntam-se os nomes de xnames e de yname
+        names.append(dataset.yname) # abre-se a lista names e juntam-se os nomes de xnames e de yname
     else:
         data = dataset.X.copy() # para salvaguardar o dataset
-        names = [dataset._xnames]
+        names = [dataset.xnames]
     mean = np.mean(data, axis = 0)
     var = np.var(data, axis = 0)
     maximo = np.max(data, axis = 0)
@@ -92,8 +92,8 @@ def train_test_split(dataset, split = 0.8):
     array = np.arange(n)
     np.random.shuffle(array)
     from src.si.data.Dataset import Dataset
-    train = Dataset(dataset.X[array[:m]], dataset.Y[array[:m]], dataset._xnames, dataset._yname)
-    test = Dataset(dataset.X[array[m:]], dataset.Y[array[m:]], dataset._xnames, dataset._yname)
+    train = Dataset(dataset.X[array[:m]], dataset.Y[array[:m]], dataset.xnames, dataset.yname)
+    test = Dataset(dataset.X[array[m:]], dataset.Y[array[m:]], dataset.xnames, dataset.yname)
     return train, test
 
 def sigmoide(z):

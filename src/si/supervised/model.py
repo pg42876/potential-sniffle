@@ -15,7 +15,7 @@ class Model(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def predcit(self, x):
+    def predict(self, x):
         raise NotImplementedError
 
     @abstractmethod

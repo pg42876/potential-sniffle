@@ -29,7 +29,7 @@ class KNN(Model):
         idxs_sort = np.argsort(distance) # dá sort aos idxs tendo em conta a distância
         return idxs_sort[:self.number_neighboors] # retorna os idxs dos melhores pontos (vizinhos mais próximos)
 
-    def predcit(self, x):
+    def predict(self, x):
 
         """
         :param x: array de teste

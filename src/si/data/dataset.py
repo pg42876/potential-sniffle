@@ -17,8 +17,8 @@ class Dataset:
             raise Exception("Trying to instanciate a DataSet without any data")
         self.X = X # linhas (dados independentes)
         self.Y = Y # última linha do dataset de dados dependentes dos outros dados
-        self._xnames = xnames if xnames else label_gen(X.shape[1])
-        self._yname = yname if yname else 'Y'
+        self.xnames = xnames if xnames else label_gen(X.shape[1])
+        self.yname = yname if yname else 'Y'
 
     @classmethod
     def from_data(cls, filename, sep = ",", labeled = True):
@@ -121,16 +121,16 @@ class Dataset:
         # RESHAPE -> y: lista com valores dependentes, mas vai tornar-se numa coluna com um elemento em cada linha
         np.savetxt(filename, fullds, delimiter = sep)
 
-    def toDataframe(self):
+    def toDataFrame(self):
 
         """ 
         Converts the dataset into a pandas DataFrame 
         """
         
         if self.Y is None: # se não existir variável dependente (y)
-            dataset = pd.DataFrame(self.X.copy(), coluns = self._xnames[:])
+            dataset = pd.DataFrame(self.X.copy(), coluns = self.xnames[:])
         else: # se existir variável dependente
-            dataset = pd.DataFrame(np.hstack((self.X, self.Y.reshape(len(self.Y), 1))), columns = np.hstack((self._xnames, self._yname)))
+            dataset = pd.DataFrame(np.hstack((self.X, self.Y.reshape(len(self.Y), 1))), columns = np.hstack((self.xnames, self.yname)))
         return dataset
 
     def getXy(self): 

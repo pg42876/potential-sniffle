@@ -86,7 +86,7 @@ class GridSearchCV:
 
 class CrossValidationScore:
 
-    def __init__(self, model, dataset, **kwargs):
+    def __init__(self, model, dataset, score = None, **kwargs):
         self.model = model
         self.dataset = dataset
         self.cv = kwargs.get('cv', 3)
@@ -94,6 +94,7 @@ class CrossValidationScore:
         self.train_score = None
         self.test_score = None
         self.ds = None
+        self.score = score
 
     def run(self):
         train_score = []

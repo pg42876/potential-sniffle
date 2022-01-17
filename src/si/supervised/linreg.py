@@ -1,7 +1,7 @@
 import numpy as np
-from src.si.data.Dataset import Dataset
-from src.si.supervised.Model import Model
-from src.si.util.Metrics import mse
+from si.data.Dataset import Dataset
+from si.supervised.Model import Model
+from si.util.Metrics import mse
 
 class LinearRegression(Model):
 
@@ -38,7 +38,7 @@ class LinearRegression(Model):
             self.theta -= self.lr * grad
             self.history[epoch] = [self.theta[:], self.cost()]
     
-    def predcit(self, x):
+    def predict(self, x):
         assert self.is_fitted, 'Model must be fitted before predicting'
         _x = np.hstack(([1], x))
         return np.dot(self.theta, _x)
@@ -75,7 +75,7 @@ class LinearRegressionReg(LinearRegression):
             self.history[epoch] = [self.theta[:], self.cost()]
     
     def predict(self, x):
-        assert self.is_fited
+        assert self.is_fitted
         _x = np.hstack(([1], x))
         return np.dot(self.theta, _x)
 

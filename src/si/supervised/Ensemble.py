@@ -21,7 +21,7 @@ class Ensemble(Model):
             model.fit(dataset)
         self.is_fitted = True
 
-    def predcit(self, x):
+    def predict(self, x):
         assert self.is_fitted, 'Model must be fit before predicting'
         preds = [model.predict(x) for model in self.models]
         vote = self.fvote(preds)

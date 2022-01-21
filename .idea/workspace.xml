@@ -8,28 +8,19 @@
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Ficha1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha1.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Ficha2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Ficha3.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha3.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Ficha4.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha4.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Ficha5.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ficha5.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/data/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/data/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/data/dataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/data/feature_selection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/data/feature_selection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/supervised/DecisonTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/DecisonTree.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/supervised/Ensemble.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/Ensemble.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/supervised/KNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/KNN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/supervised/LinRegression.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/supervised/LogRegression.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/si/supervised/LinReg.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/LinReg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/si/supervised/LogReg.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/LogReg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/si/supervised/NeuralNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/NeuralNetwork.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/supervised/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/supervised/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/supervised/nn.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/unsupervised/Clustering.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/unsupervised/Clustering.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/unsupervised/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/unsupervised/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/util/Activation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/Activation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/util/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/util/cv.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/cv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/util/im2col.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/im2col.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/util/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/si/util/scale.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/scale.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/si/util/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/si/util/util.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/Ficha1.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Ficha1.py" afterDir="false" />
     </list>
@@ -140,7 +131,8 @@
       <workItem from="1642412144129" duration="13066000" />
       <workItem from="1642432939884" duration="18000" />
       <workItem from="1642432959697" duration="782000" />
-      <workItem from="1642433802618" duration="2589000" />
+      <workItem from="1642433802618" duration="3848000" />
+      <workItem from="1642639980721" duration="13000" />
     </task>
     <servers />
   </component>

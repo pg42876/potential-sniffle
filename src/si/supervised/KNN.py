@@ -38,7 +38,7 @@ class KNN(Model):
 
         assert self.is_fitted, 'Model must be fot before prediction'
         viz = self.get_neighboors(x) # pontos mais próximos de x 
-        values = self.dataset.Y[viz].tolist() # transforma os valores em lista
+        values = self.dataset.y[viz].tolist() # transforma os valores em lista
         if self.classification: # se for uma variável discreta/fatorial
             prediction = max(set(values), key = values.count) # avalia os valores máximos -> CLASSIFICAÇÃO (devolve a classe com mais incidência)
         else: # se for uma variável contínua/numérica

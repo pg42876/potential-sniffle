@@ -42,7 +42,7 @@ def summary(dataset, format = 'df'):
     """
 
     if dataset.hasLabel():
-        data = np.hstack((dataset.X, dataset.Y.reshape(len(dataset.Y), 1))) # reshape -> serve para transformar em array; esta linha dá uma nova forma ao array (vai ter as linhas dataset.Y e uma coluna)
+        data = np.hstack((dataset.X, dataset.y.reshape(len(dataset.y), 1))) # reshape -> serve para transformar em array; esta linha dá uma nova forma ao array (vai ter as linhas dataset.Y e uma coluna)
         names = []
         for d in dataset.xnames:
             names.append(d)
@@ -87,13 +87,14 @@ def euclidean(x, y): # L2
     return dist
 
 def train_test_split(dataset, split = 0.8):
+    from si.data.Dataset import Dataset
     n = dataset.X.shape[0]  # n de linhas
     m = int(split * n)  # n de samples para o train
     arr = np.arange(n)
     np.random.shuffle(arr)
-    from ..data import Dataset
-    train = Dataset(dataset.X[arr[:m]], dataset.Y[arr[:m]], dataset.xnames, dataset.yname)
-    test = Dataset(dataset.X[arr[m:]], dataset.Y[arr[m:]], dataset.xnames, dataset.yname)
+    
+    train = Dataset(dataset.X[arr[:m]], dataset.y[arr[:m]], dataset.xnames, dataset.yname)
+    test = Dataset(dataset.X[arr[m:]], dataset.y[arr[m:]], dataset.xnames, dataset.yname)
     return train, test
 
 def sigmoide(z):

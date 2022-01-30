@@ -14,8 +14,8 @@ class Dataset:
             raise Exception("Trying to instanciate a DataSet without any data")
         self.X = X#linhas - dados independentes
         self.y = y#label dependente
-        self._xnames = xnames if xnames else label_gen(X.shape[1])
-        self._yname = yname if yname else 'y'
+        self.xnames = xnames if xnames else label_gen(X.shape[1])
+        self.yname = yname if yname else 'y'
 
     @classmethod
     def from_data(cls, filename, sep=",", labeled=True):
@@ -100,15 +100,15 @@ class Dataset:
             fullds = self.X
         np.savetxt(filename, fullds, delimiter=sep)
 
-    def toDataframe(self):
+    def toDataFrame(self):
         """ Converts the dataset into a pandas DataFrame"""
         import pandas as pd
-        if self.y is not None:#se nao tiver label
+        if self.y is not None: # se não tiver label
             fullds = np.hstack((self.X, self.y.reshape(len(self.y), 1)))
-            columns = self._xnames[:]+[self._yname]
-        else:#caso tenha label
-            fullds = self.X.copy()#self.X.copy() -> copia os dados das variaveis independentes
-            columns = self._xnames[:]#columns=self._xnames[:] -> os nomes das colunas dessas variaveis
+            columns = self.xnames[:]+[self.yname]
+        else: # caso tenha label
+            fullds = self.X.copy() # self.X.copy() -> copia os dados das variáveis independentes
+            columns = self.xnames[:] # columns=self._xnames[:] -> os nomes das colunas dessas variáveis
         return pd.DataFrame(fullds, columns=columns)
 
     def getXy(self):

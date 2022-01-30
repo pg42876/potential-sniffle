@@ -149,17 +149,17 @@ class NN(Model):
         self.is_fitted = True
 
     def predict(self, input):
-        assert self.is_fitted, 'Model must be fit befora predicting'
+        assert self.is_fitted, 'Model must be fit before predicting'
         output = input
         for layer in self.layers:
             output = layer.forward(output)
         return output
 
     def cost(self, X = None, y = None):
-        assert self.is_fitted, 'Model must be fit befora predicting'
+        assert self.is_fitted, 'Model must be fit before predicting'
         X = X if X is not None else self.dataset.X
-        y = y if y is not None else self.dataset.Y
-        output = self.predcit(X)
+        y = y if y is not None else self.dataset.y
+        output = self.predict(X)
         return self.loss(X, output)
 
 class Flatten(Layer):

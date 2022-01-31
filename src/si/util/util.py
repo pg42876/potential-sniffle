@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 # Y is reserved to idenfify dependent variables
+
 ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXZ'
 
 __all__ = ['label_gen', 'summary', 'train_test_split', 'sigmoide', 'manhattan', 'euclidean', 'add_intersect']
@@ -88,8 +89,8 @@ def euclidean(x, y): # L2
 
 def train_test_split(dataset, split = 0.8):
     from si.data.Dataset import Dataset
-    n = dataset.X.shape[0]  # n de linhas
-    m = int(split * n)  # n de samples para o train
+    n = dataset.X.shape[0]  # número de linhas
+    m = int(split * n)  # número de samples para o train
     arr = np.arange(n)
     np.random.shuffle(arr)
     

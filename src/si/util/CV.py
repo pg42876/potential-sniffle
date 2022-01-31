@@ -28,9 +28,9 @@ class CrossValidation:
                 test_scores.append(self.model.cost(test.X, test.y))
                 pred_Y.extend(list(self.model.predict(test.X)))
             else:
-                Y_train = np.ma.apply_along_axis(self.model.predict, axis=0, arr=train.X.T)
+                Y_train = np.ma.apply_along_axis(self.model.predict, axis = 0, arr = train.X.T)
                 train_scores.append(self.score(train.y, Y_train))
-                Y_test = np.ma.apply_along_axis(self.model.predict, axis=0, arr=test.X.T)
+                Y_test = np.ma.apply_along_axis(self.model.predict, axis = 0, arr = test.X.T)
                 test_scores.append(self.score(test.y, Y_test))
                 pred_Y.extend(list(Y_test))
             true_Y.extend(list(test.y))

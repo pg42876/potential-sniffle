@@ -40,13 +40,13 @@ class VarianceThreshold:
         X_trans = X[:, idxs] # seleção das features que nos interessam
         xnames = []
         for b in idxs:
-            xnames.append(dataset._xnames[b]) # seleção do nome das features (colunas)
+            xnames.append(dataset.xnames[b]) # seleção do nome das features (colunas)
         if inline: # is True: ; altera o dataset por completo; se for True -> o dataset vai ser transformado com as novas condições (guarda por cima do dataset existente)
             dataset.X = X_trans
-            dataset._xnames = xnames
+            dataset.xnames = xnames
             return dataset
         else: # se for False -> criação de um novo dataset, existindo na mesma o velho
-            return Dataset(X_trans, copy(dataset.Y), xnames, copy(dataset._yname)) # faz-se o copy com y porque estamos a ver as variáveis independentes
+            return Dataset(X_trans, copy(dataset.y), xnames, copy(dataset.yname)) # faz-se o copy com y porque estamos a ver as variáveis independentes
 
     def fit_transform(self, dataset, inline = False):
         self.fit(dataset) # recebe um dataset e corre o fit (variâncias) com esse dataset
@@ -75,7 +75,7 @@ class SelectKBest:
     
     def transform(self, dataset, inline = False):
         data = copy(dataset.X)
-        name = copy(dataset._xnames)
+        name = copy(dataset.xnames)
         if self.k > data.shape[1]: # self.k não pode ser maior que o número de colunas
             warnings.warn('K value greather than the number of features available.')
             self.k = data.shape[1] # tuplo com as dimensões do array
@@ -87,7 +87,7 @@ class SelectKBest:
             dataset.xnames = xnames
             return dataset 
         else:
-            return Dataset(datax, copy(dataset.Y), xnames, copy(dataset._yname))
+            return Dataset(datax, copy(dataset.y), xnames, copy(dataset.yname))
      
     def fit_transform(self, dataset, inline = False):
         self.fit(dataset) # recebe um dataset e corre o fit (scores) com esse dataset
@@ -120,7 +120,7 @@ def f_regression (dataset):
     """
 
     X = dataset.X
-    y = dataset.Y
+    y = dataset.y
     cor_coef = np.array([stats.pearsonr(X[:, i], y)[0] for i in range(X.shape[1])])
     dof = y.size - 2 # graus de liberdade
     cor_coef_sqrd = cor_coef ** 2

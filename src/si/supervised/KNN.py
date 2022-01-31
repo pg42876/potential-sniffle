@@ -46,5 +46,5 @@ class KNN(Model):
         return prediction 
 
     def cost(self):
-        y_pred = np.ma.apply_along_axis(self.predcit, axis = 0, arr = self.dataset.X.T) # ma: máscara; temos de usar se não vai formatar a previsão
-        return accuracy_score(self.dataset.Y, y_pred) # dá a precisão 
+        y_pred = np.ma.apply_along_axis(self.predict, axis = 0, arr = self.dataset.X.T) # ma: máscara; temos de usar se não vai formatar a previsão
+        return accuracy_score(self.dataset.y, y_pred) # dá a precisão 

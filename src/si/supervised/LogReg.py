@@ -50,7 +50,7 @@ class LogisticRegression(Model):
             res = 1 if p >= 0.5 else 0
         return res
 
-    def cost(self, X=None, Y=None, theta=None):
+    def cost(self, X = None, Y = None, theta = None):
         X = add_intersect(X) if X is not None else self.X  # criar funçao de
         Y = Y if Y is not None else self.Y
         theta = theta if theta is not None else self.theta
@@ -63,8 +63,8 @@ class LogisticRegression(Model):
 
 class LogisticRegressionReg(LogisticRegression):
 
-    def __init__(self, gd=False, epochs=1000, lr=0.1, lbd=1):
-        super(LogisticRegressionReg, self).__init__(gd=gd, epochs=epochs, lr=lr)
+    def __init__(self, gd = False, epochs = 1000, lr = 0.1, lbd = 1):
+        super(LogisticRegressionReg, self).__init__(gd = gd, epochs = epochs, lr = lr)
         self.lbd = lbd
 
     def train(self, x, y):
@@ -80,7 +80,7 @@ class LogisticRegressionReg(LogisticRegression):
             self.theta -= self.lr * grad
             self.history[epoch] = [self.theta[:], self.cost()]
 
-    def cost(self, X=None, Y=None, theta=None):
+    def cost(self, X = None, Y = None, theta = None):
         X = add_intersect(X) if X is not None else self.X
         Y = Y if Y is not None else self.Y
         theta = theta if theta is not None else self.theta

@@ -3,9 +3,10 @@ from si.util.Scale import StandardScaler
 import pandas as pd
 
 class PCA:
-    def __init__(self, num_components=2, using="svd"):
+    def __init__(self, num_components = 2, svd = True, scale = True) -> None:
         self.numcomps = num_components
-        self.alg = using
+        self.svd = svd
+        self.scale = scale
 
     def transform(self, dataset):  # objeto Dataset
         scaler = StandardScaler()
@@ -25,7 +26,7 @@ class PCA:
         somapercent = np.sum(self.sorted_eigenvalue)
         percentagem = []
         for i in self.sorted_eigenvalue:
-            percentagem.append(i/somapercent *100)
+            percentagem.append(i/somapercent * 100)
         return np.array(percentagem)
 
     def fit_transform(self, dataset):

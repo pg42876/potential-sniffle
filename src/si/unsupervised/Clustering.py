@@ -1,78 +1,126 @@
 import numpy as np
 from scipy import stats
-from  copy import copy
+from copy import copy
 import warnings
-from src.si.util.util import euclidean, manhattan
+from si import data
+from si.data import Dataset
+from si.util.Util import euclidean, manhattan, summary
+from si.util.Scale import StandardScaler
+
+class PCA:
+
+    """
+    Reduz a dimensão do dataset, mas mantém compacta a informação do dataset de maior dimensão
+    Só podem ser usados dados numéricos
+    """
+
+    def __init__(self, components = 2, method = 'svd'):
+        self.components = components #
+        available_methods = ['svd', 'evd'] 
+        if method not in available_methods:
+            raise Exception(f"Method not available. Please choose between: {available_methods}.")
+        self.method = method
+
+    def tranform(self, dataset):
+        xscale = StandardScaler().fit_transform(dataset) #Normaliza os dados
+        f = xscale.X.T
+        if self.method == 'svd':
+            self.vectors, self.values, rv = np.linalg.svd(f)
+        else:
+            matriz = np.cov(f)
+            self.vectors, self.values, rv = np.linalg.svd(matriz)
+        self.idxs_sort = np.argsort(self.values) #Índices ordenados por importância dos componentes
+        self.values_sort = self.values[self.idxs_sort] #Ordena os valores pelo índice da coluna
+        self.vectors_sort = self.vectors[:, self.idxs_sort] #Ordena os vetores pelo índice da coluna (decrescente)
+        if self.components > 0:
+            if self.components > dataset.X.shape[1]:
+                warnings.warn('The number of components is larger than the number of features.')
+                self.components = dataset.X.shape[1]
+            self.vector_comp = self.vectors_sort[:, 0:self.components] #Vetores correspondentes ao número de componentes selecionados
+        else:
+            warnings.warn('The number of components is lower than 0.')
+            self.components = 1
+            self.vector_comp = self.vectors_sort[:, 0:self.components]
+        r = np.dot(self.vector_comp.transpose(), f).transpose()
+        return r
+
+    def variance_transform(self):
+        summary_value = np.sum(self.values_sort)
+        evalues = []
+        for value in self.values_sort:
+            evalues.append(value / summary_value * 100)
+        return np.array(evalues) #Retorna um array com as variâncias em percentagem
 
 class Kmeans:
-    """
-    A cluster refers to a collection of data points aggregated together because of certain similarities.
-    You’ll define a target number k, which refers to the number of centroids you need in the dataset.
-    A centroid is the imaginary or real location representing the center of the cluster.
 
-    The K-means algorithm identifies k number of centroids, and then allocates every data
-    point to the nearest cluster, while keeping the centroids as small as possible.
-    The ‘means’ in the K-means refers to averaging of the data; that is, finding the centroid.
     """
-    def __init__(self, K: int, max_interactions = 100, distance = 'euclidean'):
-        self.k = K #n elementos que queremos nos centroids
-        self.max_interaction = max_interactions #numero maximo de iteracoes
-        self.centroids = None #numero de centroides
-        if distance == 'euclidean': #ver o tipo de distancia
+    Agrupa os dados tentando dividir as amostras por k grupos
+    minimizando as distâncias entre pontos e centróides dos clusters.
+    """
+
+    def __init__ (self, K: int, max_interactions = 100, distance = 'euclidean'):
+        self.k = K #Número inteiro - número de clusters
+        self.max_interactions = max_interactions #Número máximo de interações
+        self.centroids = None
+        if distance == 'euclidean':
             self.distance = euclidean
         elif distance == 'manhattan':
             self.distance = manhattan
-        else: # caso nao seja nem euclidean nem manhattan
+        else:
             raise Exception('Distance metric not available \n Score functions: euclidean, manhattan')
-    
-    def fit(self, dataset):
-        """Randomly selects K centroids"""
+
+    def fit (self, dataset):
+
+        """
+        Adiciona ao self o mínimo e o máximo de todas os pontos
+        """
 
         x = dataset.X
-        self._min = np.min(x, axis = 0)#min de cada linha (guarda objeto): int
-        self._max = np.max(x, axis = 0)#max de cada linha (guarda objeto): int
+        self._min = np.min(x, axis = 0) #Mínimo
+        self._max = np.max(x, axis = 0) #Máximo
+        #Não tem return porque estamos a guardar o resultado no objeto
 
-    def init_centroids(self, dataset):
+    def init_centroids (self, dataset):
+
+        """
+        PRIMEIRA ITERAÇÃO
+        Os primeiros centróides são encontrados de forma aleatória.
+        """
+        
         x = dataset.X
-        cent =[]
-        for i in range(x.shape[1]):#corre colunas
-            cent.append(np.random.uniform(low=self._min[i], high=self._max[i], size=(self.k,)))
-            #low: Lower boundary of the output interval. All values generated will be greater than or equal to low.
-            #high: Upper boundary of the output interval. All values generated will be less than or equal to high.
-            #size: Output shape. size=(self.k,): self.k * tudo
-        self.centroids = np.array(cent).T # guarda num objeto os centroides em que e um array
-        # T = transposta
+        centroids = []
+        for c in range(x.shape[1]):
+            centroids.append(np.random.uniform(low = self._min[c], high = self._max[c], size = (self.k))) #Vai correr as colunas e avaliar todos os pontos (descobre os centróides)
+        self.centroids = np.array(centroids).T #Transforma em array e faz a transposta
 
-    def get_closest_centroid(self, x):
-        dist = self.distance(x, self.centroids)#distancia
-        closest_centroid_index = np.argmin(dist, axis=0)
-        #retorna os indices dos valores mais pequenos por linha
-        # array([[10, 11, 12],[13, 14, 15]]) -> ex: axis = 0: array([0, 0, 0]), axis = 1, array([0, 0])
+    def get_closest_centroid (self, x):
+
+        """
+        Calcula as distâncias entre os centróides e escolhe as menores distâncias
+        """
+
+        dist = self.distance(x, self.centroids)
+        closest_centroid_index = np.argmin(dist, axis = 0)
         return closest_centroid_index
-    
-    def transform(self, dataset):
-        self.init_centroids(dataset)
-        X = dataset.X.copy()
+
+    def transform (self, dataset):
+        self.init_centroids(dataset) #Primeiros centróides
+        X = dataset.X 
         changed = False
         count = 0
-        old_idxs = np.zeros(X.shape[0])
-        #data.shape() -> The elements of the shape tuple give the lengths of the corresponding array dimensions.
-        while not changed or count < self.max_interaction: #while not changed == True
-            idxs = np.apply_along_axis(self.get_closest_centroid, axis=0, arr=X.T)
-            #vai aplicar get closeste centroid ao axis 0
-            #axis: Axis along which arr is sliced.
-            #arr: Input array.
-            cent = []
+        old_idxs = np.zeros(X.shape[0]) #Array de zeros
+        while not changed and count < self.max_interactions:
+            idxs = np.apply_along_axis(self.get_closest_centroid, axis = 0, arr = X.T)
+            centroids = []
             for i in range(self.k):
-                cent.append(np.mean(X[idxs == i], axis=0))#calcular a media sobre os pontos e essas medias vao ser os novos pontos
-            #cent = [np.mean(X[idxs == i],axis = 0) for i in range(self.k)]
-            self.centroids = np.array(cent)
-            changed = np.all(old_idxs == idxs) #Test whether all array elements along a given axis evaluate to True.
-            old_idxs = idxs# in indexes antigos passam a ser os novos
-            count += 1#aumenta a conta para o maximo de iteracoes
-        return self.centroids, idxs
+                centroids.append(np.mean(X[idxs == i], axis = 0)) #Cálculo dos centróides com base na média (passam a ser os novos pontos)
+            self.centroids = np.array(centroids) 
+            changed = np.any(old_idxs == idxs) #O all vai testar se todos os valores; testa se todos os idxs são os antigos
+            old_idxs = idxs #Os idxs antigos passam a ser os novos
+            count += 1 #Aumenta o número de iterações
+            return self.centroids, old_idxs
 
-    def fit_transform(self, dataset):
+    def fit_transform (self, dataset):
         self.fit(dataset)
-        centroides, idxs = self.transform(dataset)
-        return centroides, idxs
+        centroids, idxs = self.transform(dataset)
+        return centroids, idxs

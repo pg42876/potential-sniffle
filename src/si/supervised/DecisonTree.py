@@ -1,10 +1,12 @@
-from .Model import Model
-from ..util.metrics import accuracy_score
 import numpy as np
-
+from .Model import Model
+from ..util import accuracy_score
 
 class Node:
-    """Implementation of a simple binary tree for DT classifier."""
+
+    """
+    Implementation of a simple binary tree for DT classifier.
+    """
 
     def __init__(self):
         self.right = None
@@ -31,9 +33,11 @@ class DecisionTree(Model):
         self.Tree = None
 
     def nodeProbas(self, y):
+
         '''
         Calculates probability of class in a given node
         '''
+
         probas = []
         # for each unique label calculate the probability for it
         for one_class in self.classes:
@@ -42,17 +46,26 @@ class DecisionTree(Model):
         return np.asarray(probas)
 
     def gini(self, probas):
-        '''Calculates gini criterion'''
-        return 1 - np.sum(probas**2)
+
+        '''
+        Calculates gini criterion
+        '''
+
+        return 1 - np.sum(probas ** 2)
 
     def calcImpurity(self, y):
-        '''Wrapper for the impurity calculation. Calculates probas first and then passses them
-        to the Gini criterion.
+
         '''
+        Wrapper for the impurity calculation. Calculates probas first and then passses them to the Gini criterion.
+        '''
+        
         return self.gini(self.nodeProbas(y))
 
     def calcBestSplit(self, X, y):
-        '''Calculates the best possible split for the concrete node of the tree'''
+
+        '''
+        Calculates the best possible split for the concrete node of the tree
+        '''
 
         bestSplitCol = None
         bestThresh = None
@@ -100,10 +113,12 @@ class DecisionTree(Model):
 
         return bestSplitCol, bestThresh, x_left, y_left, x_right, y_right
 
-    def buildDT(self, X, y, node):
+    def buildDT(self, X, y, node): # constrói a decison tree
+        
         '''
         Recursively builds decision tree from the top to bottom
         '''
+        
         # checking for the terminal conditions
         if node.depth >= self.max_depth:
             node.is_terminal = True
@@ -156,14 +171,15 @@ class DecisionTree(Model):
         self.is_fitted = True
 
     def predictSample(self, x, node):
+        
         '''
         Passes one object through decision tree and return the probability of it to belong to each class
         '''
+        
         assert self.is_fitted, 'Model must be fit before predicting'
         # if we have reached the terminal node of the tree
         if node.is_terminal:
             return node.probas
-
         if x[node.column] > node.threshold:
             probas = self.predictSample(x, node.right)
         else:
@@ -175,10 +191,8 @@ class DecisionTree(Model):
         pred = np.argmax(self.predictSample(x, self.Tree))
         return pred
 
-    def cost(self, X=None, y=None):
+    def cost(self, X = None, y = None):
         X = X if X is not None else self.dataset.X
-        y = y if y is not None else self.dataset.Y
-
-        y_pred = np.ma.apply_along_axis(self.predict,
-                                        axis=0, arr=X.T)
+        y = y if y is not None else self.dataset.y
+        y_pred = np.ma.apply_along_axis(self.predict, axis = 0, arr = X.T)
         return accuracy_score(y, y_pred)

@@ -1,5 +1,5 @@
 from si.supervised.Model import Model
-from ..util.util import sigmoid, add_intersect
+from si.util.Util import sigmoide, add_intersect
 import numpy as np
 
 class LogisticRegression(Model):
@@ -27,7 +27,7 @@ class LogisticRegression(Model):
         self.theta = np.zeros(n)
         for epoch in range(self.epochs):
             z = np.dot(x, self.theta)
-            h = sigmoid(z)
+            h = sigmoide(z)
             grad = np.dot(x.T, (h - y)) / y.size
             self.theta -= self.lr * grad
             self.history[epoch] = [self.theta[:], self.cost()]
@@ -35,7 +35,7 @@ class LogisticRegression(Model):
     def probability(self, x):
         assert self.is_fitted, 'Model must be fitted before predicting'
         _x = np.hstack(([1], x))
-        return sigmoid(np.dot(self.theta, _x))
+        return sigmoide(np.dot(self.theta, _x))
 
     def predict(self, x):
         x = np.array(x)
@@ -55,7 +55,7 @@ class LogisticRegression(Model):
         Y = Y if Y is not None else self.Y
         theta = theta if theta is not None else self.theta
 
-        h = sigmoid(np.dot(X, theta))
+        h = sigmoide(np.dot(X, theta))
         cost = (-Y * np.log(h) - (1-Y) * np.log(1-h))
         res = np.sum(cost) / X.shape[0]
         return res
@@ -74,7 +74,7 @@ class LogisticRegressionReg(LogisticRegression):
         self.theta = np.zeros(n)
         for epoch in range(self.epochs):
             z = np.dot(x, self.theta)
-            h = sigmoid(z)
+            h = sigmoide(z)
             grad = np.dot(x.T, (h - y)) / y.size
             grad[1:] = grad[1:] + (self.lbd/m) * self.theta[1:]
             self.theta -= self.lr * grad
@@ -86,7 +86,7 @@ class LogisticRegressionReg(LogisticRegression):
         theta = theta if theta is not None else self.theta
 
         m = X.shape[0]
-        p = sigmoid(np.dot(X, theta))
+        p = sigmoide(np.dot(X, theta))
         cost = (-Y * np.log(p) - (1-Y) * np.log(1-p))
         reg = np.dot(theta[1:], theta[1:]) * self.lbd / (2*m)
         res = (np.sum(cost) / m) + reg

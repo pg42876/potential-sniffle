@@ -1,15 +1,15 @@
-from .util import train_test_split
 import numpy as np
-import itertools
+import pandas as pd
+from si.util.Util import train_test_split
 
-class CrossValidationScore:
+class CrossValidation:
 
-    def __init__(self, model, dataset, score=None, **kwargs):
+    def __init__(self, model, dataset, score = None, **kwargs):
         self.model = model
         self.dataset = dataset
+        self.cv = kwargs.get("cv", 3)
         self.score = score
-        self.cv = kwargs.get('cv', 3)
-        self.split = kwargs.get('split', 0.8)
+        self.split = kwargs.get("split", 0.8)
         self.train_scores = None
         self.test_scores = None
         self.ds = None
@@ -18,13 +18,13 @@ class CrossValidationScore:
         train_scores = []
         test_scores = []
         ds = []  # guardar datasets
-        true_Y, pred_Y = [], []  #verdadeira label e label prevista
+        true_Y, pred_Y = [], []
         for _ in range(self.cv):
             train, test = train_test_split(self.dataset, self.split)
             ds.append((train, test))
             self.model.fit(train)
             if not self.score:
-                train_scores.append(self.model.cost())#se nao tiver scores faz o cost
+                train_scores.append(self.model.cost())
                 test_scores.append(self.model.cost(test.X, test.y))
                 pred_Y.extend(list(self.model.predict(test.X)))
             else:
@@ -41,25 +41,24 @@ class CrossValidationScore:
         self.true_Y = np.array(true_Y)
         self.pred_Y = np.array(pred_Y)
         return train_scores, test_scores
-
-    def toDataframe(self):
-        import pandas as pd
-        assert self.train_scores and self.test_scores, "Need to run first."
-        return pd.DataFrame({'Train Scores': self.train_scores, 'Test Scores': self.test_scores})
-
+        
+    def toDataFrame(self):
+        assert self.train_scores and self.test_scores, "Need to run trainning before hand"
+        return np.array((self.train_scores, self.test_scores))
 
 class GridSearchCV:
 
-    def __init__(self, model, dataset, parameters, **kwargs):
+    def __init__(self, model, dataset, parameters, score = None, **kwargs):
         self.model = model
         self.dataset = dataset
+        self.score = score
         hasparam = [hasattr(self.model, param) for param in parameters]
         if np.all(hasparam):
             self.parameters = parameters
         else:
             index = hasparam.index(False)
             keys = list(parameters.keys())
-            raise ValueError(f'Wrong parameters: {keys[index]}')
+            raise ValueError(f" Wrong parameters: {keys[index]}")
         self.kwargs = kwargs
         self.results = None
 
@@ -67,27 +66,17 @@ class GridSearchCV:
         self.results = []
         attrs = list(self.parameters.keys())
         values = list(self.parameters.values())
-        for conf in itertools.product(*values):
-            for i in range(len(attrs)):
-                setattr(self.model, attrs[i], conf[i])
-            scores = CrossValidationScore(self.model, self.dataset, **self.kwargs).run()
-            self.results.append((conf, scores))
+        from itertools import product
+        for comb in list(product(*values)):
+            for attr, value in zip(attrs, comb):
+                setattr(self.model, attr, value)
+            cv = CrossValidation(self.model, self.dataset, self.score, **self.kwargs)
+            cv.run()
+            self.results.append(cv.run())
         return self.results
 
-    def toDataframe(self):
-        import pandas as pd
-        assert self.results, 'The grid search needs to be ran first'
-        data = dict()
-        for i, k in enumerate(self.parameters.keys()):
-            v = []
-            for r in self.results:
-                v.append(r[0][i])
-            data[k] = v
-        for i in range(len(self.results[0][1][0])):
-            treino, teste = [], []
-            for r in self.results:
-                treino.append(r[1][0][i])
-                teste.append(r[1][1][i])
-            data['Train ' + str(i+1)] = treino
-            data['Test ' + str(i+1)] = teste
-        return pd.DataFrame(data)
+    def toDataFrame(self):
+        assert self.results, "Need to run trainning before hand"
+        n_cv = len(self.results[0][0])
+        data = np.hstack((np.array([res[0] for res in self.results]), np.array([res[1] for res in self.results])))
+        return pd.DataFrame(data = data, columns = [f"CV_{i + 1} train" for i in range(n_cv)] + [f"CV_{i + 1} test" for i in range(n_cv)])

@@ -1,3 +1,3 @@
-from .dataset import Dataset, summary
-from .scale import StandardScaler
-from .Features_Selection import VarianceThreshold, SelectKBest
+from .Dataset import Dataset
+from si.util.Scale import StandardScaler
+from .Feature_selection import VarianceThreshold, SelectKBest

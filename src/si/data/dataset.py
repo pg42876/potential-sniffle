@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from si.util.Util import label_gen
+from si.util.util import label_gen
 
 __all__ = ['Dataset']
 
@@ -14,12 +14,13 @@ class Dataset:
             raise Exception("Trying to instanciate a DataSet without any data")
         self.X = X#linhas - dados independentes
         self.y = y#label dependente
-        self.xnames = xnames if xnames else label_gen(X.shape[1])
-        self.yname = yname if yname else 'y'
+        self._xnames = xnames if xnames else label_gen(X.shape[1])
+        self._yname = yname if yname else 'y'
 
     @classmethod
     def from_data(cls, filename, sep=",", labeled=True):
         """Creates a DataSet from a data file.
+
         :param filename: The filename
         :type filename: str
         :param sep: attributes separator, defaults to ","
@@ -45,6 +46,7 @@ class Dataset:
     @classmethod
     def from_dataframe(cls, df, ylabel=None):
         """Creates a DataSet from a pandas dataframe.
+
         :param df: [description]
         :type df: [type]
         :param ylabel: [description], defaults to None
@@ -87,6 +89,7 @@ class Dataset:
 
     def writeDataset(self, filename, sep=","):
         """Saves the dataset to a file
+
         :param filename: The output file path
         :type filename: str
         :param sep: The fields separator, defaults to ","
@@ -100,16 +103,54 @@ class Dataset:
             fullds = self.X
         np.savetxt(filename, fullds, delimiter=sep)
 
-    def toDataFrame(self):
+    def toDataframe(self):
         """ Converts the dataset into a pandas DataFrame"""
         import pandas as pd
-        if self.y is not None: # se não tiver label
+        if self.y is not None:#se nao tiver label
             fullds = np.hstack((self.X, self.y.reshape(len(self.y), 1)))
-            columns = self.xnames[:]+[self.yname]
-        else: # caso tenha label
-            fullds = self.X.copy() # self.X.copy() -> copia os dados das variáveis independentes
-            columns = self.xnames[:] # columns=self._xnames[:] -> os nomes das colunas dessas variáveis
+            columns = self._xnames[:]+[self._yname]
+        else:#caso tenha label
+            fullds = self.X.copy()#self.X.copy() -> copia os dados das variaveis independentes
+            columns = self._xnames[:]#columns=self._xnames[:] -> os nomes das colunas dessas variaveis
         return pd.DataFrame(fullds, columns=columns)
 
     def getXy(self):
         return self.X, self.y
+
+
+def summary(dataset, format='df'):
+    """ Returns the statistics of a dataset(mean, std, max, min)
+
+    param dataset: A Dataset object
+    type dataset: si.data.Dataset
+    param format: Output format ('df':DataFrame, 'dict':dictionary ), defaults to 'df'
+    type format: str, optional
+    """
+    if dataset.hasLabel():#verifica se existe label
+        data = np.hstack((dataset.X, dataset.y.reshape(len(dataset.y),1)))
+        #np.hstack(junta X,Y) -> reshape em self.Y.reshape(len(self.Y): linhas e 1))) coluna
+        names = []#lista com nome das colunas
+        for i in dataset._xnames:
+            names.append(i)
+        names.append(dataset._yname)#adicionar o nome da coluna label
+    else:#se nao tiver label
+        data = dataset.X.copy()
+        names = [dataset._xnames]# -> names = [[dataset._xnames]]: nomes das colunas das variaveis indepedentes
+    mean = np.mean(data, axis=0)#axis 0 = rows, axis 1 = columns
+    var = np.var(data, axis=0)
+    maxim = np.max(data, axis=0)
+    minim = np.min(data, axis=0)
+    stats = {}
+    #-> stats ={names[i]:{'mean': mean[i],'var': var[i],'max': maxi[i], 'min': mini[i]}, names[i]:{'mean': mean[i],'var': var[i],'max': maxi[i], 'min': mini[i]}}
+    for i in range(data.shape[1]):#percorre as colunas
+        stat = {'mean': mean[i]#faz a media da coluna i
+            ,'var': var[i]#faz a variancia da coluna i
+            ,'max': maxim[i]#faz o maximo da coluna i
+            ,'min': minim[i]}#faz o minimo da coluna i
+
+        stats[names[i]] = stat #key: names[i], value: stat
+    if format == 'df':#se quiser em pandas dataframe
+        df = pd.DataFrame(stats)#convert an array to a dataframe
+        return df
+    else:#se nao quiser
+        return stats #retorna o dicionario stats

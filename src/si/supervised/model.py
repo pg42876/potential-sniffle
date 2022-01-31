@@ -2,12 +2,7 @@ from abc import ABC, abstractmethod
 
 class Model(ABC):
     def __init__(self):
-        
-        """
-        Abstract class defining an interface
-        for supervised learning models.
-        """
-        
+        """ Abstract class defining an interface for supervised learning models."""
         self.is_fitted = False
 
     @abstractmethod
@@ -15,7 +10,7 @@ class Model(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def predict(self, x):
+    def predict(self, dataset):
         raise NotImplementedError
 
     @abstractmethod

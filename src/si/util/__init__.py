@@ -1,3 +1,4 @@
-from .Util import *
-from .Metrics import *
-from .CV import CrossValidation, GridSearchCV
+from .util import *
+from .metrics import *
+from .CrossValidationScore import CrossValidationScore, GridSearchCV
+from .Activation import *

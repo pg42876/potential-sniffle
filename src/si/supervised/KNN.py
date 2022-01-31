@@ -1,50 +1,39 @@
+from src.si.supervised.Model import Model
+from src.si.util import euclidean
+from src.si.util.metrics import accuracy_score
 import numpy as np
-from .Model import Model
-from si.util.Util import euclidean
-from si.util.Metrics import accuracy_score
 
 class KNN(Model):
-
-    """
-    K Vizinhos Mais Próximos (método lento na fase de previsão)
-    """
-    
-    def __init__(self, number_neighboors, classification = True):
-        super(KNN).__init__()
-        self.number_neighboors = number_neighboors
+    def __init__(self, num_neighbors, classification=True):
+        super(KNN).__init__()#invocar o init do modelo
+        self.num_neighbors = num_neighbors
         self.classification = classification
 
     def fit(self, dataset):
+        """"""
         self.dataset = dataset
         self.is_fitted = True
 
-    def get_neighboors(self, x):
-
-        """
-        Calcula as distâncias entre cada ponto de teste
-        em relação a todos os pontos do dataset de treino
-        """
-
-        distance = euclidean(x, self.dataset.X) # calcular a distância entre um ponto e todos os outros (distância euclidiana)
-        idxs_sort = np.argsort(distance) # dá sort aos idxs tendo em conta a distância
-        return idxs_sort[:self.number_neighboors] # retorna os idxs dos melhores pontos (vizinhos mais próximos)
+    def get_neighbors(self, x):# x e um numero
+        distances = euclidean(x, self.dataset.X)
+        sorted_index = np.argsort(distances)#os indices vao ser postos por ordem crescente
+        return sorted_index[:self.num_neighbors]#ate aos neighboors especificados
 
     def predict(self, x):
+        assert self.is_fitted, 'Model must be fit before predicting'
+        neighbors = self.get_neighbors(x)#obtem os neighboors (pontos mais proximos)
+        values = self.dataset.y[neighbors].tolist()#vai escolher os neighboors e passa para lista
+        if self.classification:
+            prediction = max(set(values), key=values.count)#retorna o que tem o valor maximo da label (a label que se repete mais vezes)
+        else:
+            prediction = sum(values) / len(values)
+        return prediction
 
-        """
-        :param x: array de teste
-        :return: predicted labels
-        """
+    def cost(self, X=None, y=None):
+        X = X if X is not None else self.dataset.X
+        y = y if y is not None else self.dataset.y
 
-        assert self.is_fitted, 'Model must be fot before prediction'
-        viz = self.get_neighboors(x) # pontos mais próximos de x 
-        values = self.dataset.y[viz].tolist() # transforma os valores em lista
-        if self.classification: # se for uma variável discreta/fatorial
-            prediction = max(set(values), key = values.count) # avalia os valores máximos -> CLASSIFICAÇÃO (devolve a classe com mais incidência)
-        else: # se for uma variável contínua/numérica
-            prediction = sum(values) / len(values) # média dos valores -> REGRRESSÃO
-        return prediction 
+        y_pred = np.ma.apply_along_axis(self.predict, axis=0, arr=X.T)
+        # ma: temos de usar porque pode formatar a previsao
+        return accuracy_score(y, y_pred)
 
-    def cost(self):
-        y_pred = np.ma.apply_along_axis(self.predcit, axis = 0, arr = self.dataset.X.T) # ma: máscara; temos de usar se não vai formatar a previsão
-        return accuracy_score(self.dataset.Y, y_pred) # dá a precisão 

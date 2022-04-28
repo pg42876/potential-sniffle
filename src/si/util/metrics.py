@@ -81,7 +81,7 @@ class ConfusionMatrix:
     def __call__(self, true_y, pred_y):
         self.true = np.array(true_y)
         self.pred = np.array(pred_y)
-        return self.toDataframe()
+        return self.toDataFrame()
 
     def calc(self):
         conf = pd.crosstab(self.true, self.pred, rownames = ['Actual Values'], colnames = ['Predicted Values'], margins = True)
@@ -89,3 +89,4 @@ class ConfusionMatrix:
 
     def toDataframe(self):
         return pd.DataFrame(self.calc())
+
